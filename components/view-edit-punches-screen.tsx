@@ -180,7 +180,7 @@ export default function ViewEditPunchesScreen() {
     console.log('[v0] fetchEmployees triggered')
     setIsEmployeesLoading(true)
     try {
-      const response = await fetch('http://localhost:8080/api/employees/getAllPermittedEmployees', {
+      const response = await fetch('http://13.206.112.19:8080/api/employees/getAllPermittedEmployees', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -486,7 +486,7 @@ export default function ViewEditPunchesScreen() {
       }
 
       const token = auth.token
-      const url = `http://localhost:8080/api/punch/delete/${punchId}`
+      const url = `http://13.206.112.19:8080/api/punch/delete/${punchId}`
       const response = await fetch(url, {
         method: 'DELETE',
         headers: {

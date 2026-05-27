@@ -2,7 +2,7 @@ export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get("Authorization")
 
-    const response = await fetch("http://localhost:8080/api/modules/tree", {
+    const response = await fetch("http://13.206.112.19:8080/api/modules/tree", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

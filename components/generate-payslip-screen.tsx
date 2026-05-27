@@ -34,8 +34,8 @@ interface ApiEmployee {
 // Per-employee generation status tracked during bulk generate
 type GenStatus = "idle" | "generating" | "done" | "failed"
 
-const BASE   = "http://localhost:8080/api/pdf"
-const SALARY = "http://localhost:8080/api/payrolls"
+const BASE   = "http://13.206.112.19:8080/api/pdf"
+const SALARY = "http://13.206.112.19:8080/api/payrolls"
 
 export function GeneratePayslipScreen() {
   const [selectedEmployee, setSelectedEmployee]   = useState<string>("")

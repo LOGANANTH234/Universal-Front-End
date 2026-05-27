@@ -258,7 +258,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
     try {
       // 1️⃣  Drilldown detail (shifts, punches, breakdown, uncovered intervals)
       const detailRes = await fetch(
-        `http://localhost:8080/api/payrolls/getDailySalaryDetail?employeeId=${record.employeeId}&date=${record.workDate}`,
+        `http://13.206.112.19:8080/api/payrolls/getDailySalaryDetail?employeeId=${record.employeeId}&date=${record.workDate}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!detailRes.ok) throw new Error(`${detailRes.status} ${detailRes.statusText}`)
@@ -269,7 +269,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
       //     Try a dedicated single-record endpoint first; fall back gracefully.
       try {
         const summaryRes = await fetch(
-          `http://localhost:8080/api/payrolls/getDailySalary?employeeId=${record.employeeId}&date=${record.workDate}`,
+          `http://13.206.112.19:8080/api/payrolls/getDailySalary?employeeId=${record.employeeId}&date=${record.workDate}`,
           { headers: { Authorization: `Bearer ${auth.token}` } }
         )
         if (summaryRes.ok) {
@@ -318,7 +318,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
   const handleDeletePunch = async (punchId: string) => {
     if (!auth?.token) throw new Error("Unauthorized – please login again.")
 
-    const response = await fetch(`http://localhost:8080/api/punch/delete/${punchId}`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/punch/delete/${punchId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${auth.token}` },
     })
