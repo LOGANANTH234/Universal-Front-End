@@ -91,7 +91,7 @@ export default function EmployeeCardGrid({
     }
 
     try {
-      const response = await apiClient(`http://13.206.112.19:8080/api/users/${changePasswordEmployee.id}`, {
+      const response = await apiClient(`http://localhost:8080/api/users/${changePasswordEmployee.id}`, {
         method: "PUT",
         body: {
           newPassword,

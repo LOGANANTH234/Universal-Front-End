@@ -95,6 +95,9 @@ interface DailySalaryDetail {
   penaltyAmount: number
   netSalary: number
   createdAt: string
+  // Optional meta fields shown in the header bar
+  salaryFrequency?: string
+  workdayPolicy?:   string
   regularShifts: ShiftConfigDto[]
   overtimeShifts: ShiftConfigDto[]
   shiftBreakdown: ShiftBreakdownDto[]
@@ -153,9 +156,9 @@ function SourceLabel({ source }: { source: string }): string {
 
 // ─── Shared cell styles ───────────────────────────────────────────────────────
 
-// After
 const TH = "px-3 py-2.5 text-[11px] font-medium tracking-wide text-gray-500 bg-gray-100/80 border-b border-gray-200 border-r border-gray-200 whitespace-nowrap first:border-l first:border-l-gray-200 last:border-r-0"
 const TD = "px-3 py-3 text-[12.5px] border-b border-gray-200 border-r border-gray-200 align-middle whitespace-nowrap first:border-l first:border-l-gray-200 last:border-r-0"
+
 // ─── Resize hook ──────────────────────────────────────────────────────────────
 
 function useHorizontalResize(initialPct: number, min: number, max: number) {
@@ -246,9 +249,6 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
   const { pct: leftPct, containerRef, onMouseDown: onHDrag } = useHorizontalResize(52, 20, 80)
 
   // ── Fetch drilldown detail ────────────────────────────────────────────────
-  // After fetching the punch/shift detail we ALSO re-fetch the daily salary
-  // summary so that net salary, gross, penalty etc. all reflect the latest
-  // punch data and we can push the updated record up to the parent list.
 
   const fetchDetail = useCallback(async () => {
     if (!record || !auth?.token) return
@@ -258,25 +258,26 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
     try {
       // 1️⃣  Drilldown detail (shifts, punches, breakdown, uncovered intervals)
       const detailRes = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/getDailySalaryDetail?employeeId=${record.employeeId}&date=${record.workDate}`,
+        `http://localhost:8080/api/payrolls/getDailySalaryDetail?employeeId=${record.employeeId}&date=${record.workDate}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!detailRes.ok) throw new Error(`${detailRes.status} ${detailRes.statusText}`)
       const detailData: DailySalaryDetail = await detailRes.json()
       setDetail(detailData)
 
-      // 2️⃣  Re-calculate / re-fetch the summary record so net salary is fresh.
-      //     Try a dedicated single-record endpoint first; fall back gracefully.
+      // 2️⃣  Re-fetch the summary record so net salary is fresh.
       try {
         const summaryRes = await fetch(
-          `http://13.206.112.19:8080/api/payrolls/getDailySalary?employeeId=${record.employeeId}&date=${record.workDate}`,
+          `http://localhost:8080/api/payrolls/getDailySalary?employeeId=${record.employeeId}&date=${record.workDate}`,
           { headers: { Authorization: `Bearer ${auth.token}` } }
         )
         if (summaryRes.ok) {
           const summaryData = await summaryRes.json()
-          // The API may return an array (list endpoint) or a single object
+
+          // ✅ FIX: Always find by employeeId — never blindly take [0],
+          //    which could be a different employee when the API returns a list.
           const fresh: DailySalaryRecord = Array.isArray(summaryData)
-            ? summaryData[0]
+            ? summaryData.find((r: DailySalaryRecord) => r.employeeId === record.employeeId) ?? summaryData[0]
             : summaryData
 
           if (fresh) {
@@ -285,18 +286,19 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
           }
         }
       } catch {
-        // If the summary endpoint doesn't exist, derive the values we can
-        // directly from the detail response so the modal is still consistent.
+        // If the summary endpoint doesn't exist, derive values from the detail
+        // response. ✅ FIX: Always anchor to `record` (the prop) — never
+        // `localRecord`, which may still hold the previous employee's data.
         const derived: DailySalaryRecord = {
-          ...(localRecord ?? record),
-          workDuration:   detailData.workDuration,
-          payableMinutes: detailData.payableMinutes,
-          regularSalary:  detailData.regularSalary,
-          overtimeSalary: detailData.overtimeSalary,
-          extraAllowance: detailData.extraAllowance,
-          penaltyMinutes: detailData.penaltyMinutes,
+          ...record,
+          workDuration:          detailData.workDuration,
+          payableMinutes:        detailData.payableMinutes,
+          regularSalary:         detailData.regularSalary,
+          overtimeSalary:        detailData.overtimeSalary,
+          extraAllowance:        detailData.extraAllowance,
+          penaltyMinutes:        detailData.penaltyMinutes,
           penaltyAmountDeducted: detailData.penaltyAmount,
-          totalPay:       detailData.netSalary,
+          totalPay:              detailData.netSalary,
         }
         setLocalRecord(derived)
         onRecordUpdate?.(derived)
@@ -318,7 +320,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
   const handleDeletePunch = async (punchId: string) => {
     if (!auth?.token) throw new Error("Unauthorized – please login again.")
 
-    const response = await fetch(`http://13.206.112.19:8080/api/punch/delete/${punchId}`, {
+    const response = await fetch(`http://localhost:8080/api/punch/delete/${punchId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${auth.token}` },
     })
@@ -333,7 +335,6 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
     }
 
     setIsDeleteModalOpen(false)
-    // Re-fetch detail AND recalculate salary
     await fetchDetail()
   }
 
@@ -354,11 +355,6 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
   if (!localRecord) return null
 
   const displayRecord = localRecord
-
-  const grossPay =
-    (displayRecord.regularSalary  || 0) +
-    (displayRecord.overtimeSalary || 0) +
-    (displayRecord.extraAllowance || 0)
 
   const punches = detail?.punches ?? []
 
@@ -383,7 +379,6 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
 
           <TickerBanner />
 
-
         </div>
 
         {/* ══ MAIN ══ */}
@@ -392,7 +387,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
           {loading && (
             <div className="flex-1 flex items-center justify-center gap-2 text-gray-400 text-sm">
               <Loader2 className="h-4 w-4 animate-spin" />
-             Loading....
+              Loading....
             </div>
           )}
 
@@ -516,8 +511,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
                     </div>
                   </div>
 
-                <div className="flex-1 overflow-y-auto overflow-x-auto border-t border-gray-200">
-
+                  <div className="flex-1 overflow-y-auto overflow-x-auto border-t border-gray-200">
                     {punches.length === 0 ? (
                       <EmptyState label="No punches recorded." />
                     ) : (
@@ -539,7 +533,9 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
                             const isIn = p.punchType === "IN"
                             return (
                               <tr key={p.id} className="hover:bg-purple-50/20 transition-colors">
-                                <td className={`${TD} font-medium text-gray-800`}>{displayRecord.employeeName}</td>
+                                {/* ✅ FIX: Use record.employeeName (the prop), not
+                                    displayRecord.employeeName which can be stale */}
+                                <td className={`${TD} font-medium text-gray-800`}>{record?.employeeName}</td>
                                 <td className={`${TD} text-left text-gray-700`}>
                                   {fmtDate(p.attendanceDate)}
                                 </td>
@@ -606,24 +602,24 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
         {/* ══ BOTTOM BAR ══ */}
         {!loading && (
           <div className="flex-shrink-0 border-t border-gray-200 bg-white px-8 py-3 shadow-[0_-1px_4px_rgba(0,0,0,0.04)]">
-           <div className="flex items-center justify-end gap-5 flex-wrap">
-  {(displayRecord.penaltyAmountDeducted || 0) > 0 && (
-    <>
-      <BarItem
-        label="Penalty"
-        value={`− ${fmt(displayRecord.penaltyAmountDeducted)}`}
-        valueClass="text-red-500"
-        labelClass="text-red-400"
-      />
-      <BarSep />
-    </>
-  )}
-  <div className="flex items-center gap-2.5">
-    <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
-    <span className="text-[11px] uppercase tracking-widest text-gray-400 font-medium">Net salary</span>
-    <span className="font-mono font-bold text-blue-600 text-[19px]">{fmt(displayRecord.totalPay)}</span>
-  </div>
-</div>
+            <div className="flex items-center justify-end gap-5 flex-wrap">
+              {(displayRecord.penaltyAmountDeducted || 0) > 0 && (
+                <>
+                  <BarItem
+                    label="Penalty"
+                    value={`− ${fmt(displayRecord.penaltyAmountDeducted)}`}
+                    valueClass="text-red-500"
+                    labelClass="text-red-400"
+                  />
+                  <BarSep />
+                </>
+              )}
+              <div className="flex items-center gap-2.5">
+                <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
+                <span className="text-[11px] uppercase tracking-widest text-gray-400 font-medium">Net salary</span>
+                <span className="font-mono font-bold text-blue-600 text-[19px]">{fmt(displayRecord.totalPay)}</span>
+              </div>
+            </div>
           </div>
         )}
 
@@ -770,8 +766,8 @@ function SalaryBreakdownTable({ detail }: { detail: DailySalaryDetail }) {
         </span>
       </div>
 
- <div className="overflow-x-auto border-t border-gray-200">
-  <table className="w-full border-collapse text-[12.5px] min-w-[820px]">
+      <div className="overflow-x-auto border-t border-gray-200">
+        <table className="w-full border-collapse text-[12.5px] min-w-[820px]">
           <thead>
             <tr>
               <th className={`${TH} text-left w-[22%]`}>Shift name</th>
@@ -934,7 +930,7 @@ function UncoveredIntervalsPanel({ intervals }: { intervals: UncoveredIntervalDt
           )}
           {significant.length > 0 && (
             <div className="overflow-x-auto border-t border-gray-200">
-  <table className="w-full border-collapse text-[12.5px]">
+              <table className="w-full border-collapse text-[12.5px]">
                 <thead>
                   <tr>
                     <th className={`${TH} text-left w-[30%]`}>From</th>
