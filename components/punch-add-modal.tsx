@@ -251,7 +251,7 @@ export default function PunchAddModal({
 
       console.log("[v0] Request body:", requestBody)
 
-      const response = await fetch(`http://13.206.112.19:8080/api/punch/add-pair/${employeeId}`, {
+      const response = await fetch(`http://localhost:8080/api/punch/add-pair/${employeeId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

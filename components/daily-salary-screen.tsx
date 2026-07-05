@@ -98,7 +98,7 @@ export function DailySalaryScreen() {
         String(date.getDate()).padStart(2, "0"),
       ].join("-")
       const res = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/getDailySalary?date=${d}`,
+        `http://localhost:8080/api/payrolls/getDailySalary?date=${d}`,
         { headers: { Authorization: `Bearer ${auth.token}` } },
       )
 							  
@@ -128,7 +128,7 @@ export function DailySalaryScreen() {
         String(selectedDate.getDate()).padStart(2, "0"),
       ].join("-")
       const res = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/calculate-daily-salary?date=${d}`,
+        `http://localhost:8080/api/payrolls/calculate-daily-salary?date=${d}`,
         { method: "POST", headers: { Authorization: `Bearer ${auth.token}` } },
       )
       if (!res.ok) throw new Error(`API error: ${res.statusText}`)

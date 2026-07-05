@@ -127,7 +127,7 @@ export default function PunchEditModal({
         amPm: period,
       }
 
-      const response = await fetch(`http://13.206.112.19:8080/api/punch/update/${punch.id}`, {
+      const response = await fetch(`http://localhost:8080/api/punch/update/${punch.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

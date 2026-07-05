@@ -92,7 +92,7 @@ export function WarningsScreen() {
 
   // Pagination
   const [pageNo, setPageNo] = useState(0)
-  const [pageSize, setPageSize] = useState(100)
+  const [pageSize, setPageSize] = useState(10000)
 
   // Data
   const [data, setData] = useState<WarningRecord[]>([])
@@ -128,7 +128,7 @@ export function WarningsScreen() {
         })
 
         const response = await fetch(
-          `http://13.206.112.19:8080/api/warnings/by-range?${params.toString()}`,
+          `http://localhost:8080/api/warnings/by-range?${params.toString()}`,
           { headers: { Authorization: `Bearer ${auth.token}` } }
         )
 
