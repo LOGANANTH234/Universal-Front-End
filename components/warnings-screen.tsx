@@ -128,7 +128,7 @@ export function WarningsScreen() {
         })
 
         const response = await fetch(
-          `http://localhost:8080/api/warnings/by-range?${params.toString()}`,
+          `http://13.206.112.19:8080/api/warnings/by-range?${params.toString()}`,
           { headers: { Authorization: `Bearer ${auth.token}` } }
         )
 

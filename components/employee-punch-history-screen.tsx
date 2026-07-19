@@ -319,7 +319,7 @@ export default function EmployeePunchHistoryScreen() {
       setError(null)
       try {
         const url =
-          `http://localhost:8080/api/punch/history` +
+          `http://13.206.112.19:8080/api/punch/history` +
           `?startDate=${startDate}&endDate=${endDate}&page=0&size=1000000`
         const res = await fetch(url, { headers: { Authorization: `Bearer ${auth.token}` } })
         if (!res.ok) throw new Error(`API error: ${res.statusText}`)

@@ -127,7 +127,7 @@
   // Helpers
   // ─────────────────────────────────────────────────────────────────────────────
 
-  const BASE = "http://localhost:8080"
+  const BASE = "http://13.206.112.19:8080"
 
   function fmt(n: number | null | undefined) {
     if (n == null || isNaN(n)) return "₹0.00"

@@ -113,7 +113,7 @@ export default function EmployeeListScreen() {
         cache.setError(null)
         setIsLoading(true)
         const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")!).token : null
-        const response = await fetch("http://localhost:8080/api/employees/getAllEmployees", {
+        const response = await fetch("http://13.206.112.19:8080/api/employees/getAllEmployees", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -181,7 +181,7 @@ export default function EmployeeListScreen() {
     setIsLoadingInactive(true)
     try {
       const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")!).token : null
-      const response = await fetch("http://localhost:8080/api/employees/getAllInactiveEmployees", {
+      const response = await fetch("http://13.206.112.19:8080/api/employees/getAllInactiveEmployees", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -259,7 +259,7 @@ export default function EmployeeListScreen() {
 
     try {
       const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")!).token : null
-      const response = await fetch(`http://localhost:8080/api/employees/deleteEmployee/${id}`, {
+      const response = await fetch(`http://13.206.112.19:8080/api/employees/deleteEmployee/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -290,7 +290,7 @@ export default function EmployeeListScreen() {
     try {
       const apiStatus = newStatus === "Active" ? "ACTIVE" : "DEACTIVE"
       const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")!).token : null
-      const response = await fetch(`http://localhost:8080/api/employees/${id}/status?value=${apiStatus}`, {
+      const response = await fetch(`http://13.206.112.19:8080/api/employees/${id}/status?value=${apiStatus}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -326,7 +326,7 @@ export default function EmployeeListScreen() {
 
     try {
       const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")!).token : null
-      const response = await fetch(`http://localhost:8080/api/employees/${employee.id}/history`, {
+      const response = await fetch(`http://13.206.112.19:8080/api/employees/${employee.id}/history`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -363,7 +363,7 @@ export default function EmployeeListScreen() {
       setOperationLoading({ show: true, message: "Syncing photos", employeeName: "" })
 
       const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")!).token : null
-      const response = await fetch("http://localhost:8080/api/employees/sync-photos", {
+      const response = await fetch("http://13.206.112.19:8080/api/employees/sync-photos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

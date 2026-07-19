@@ -97,7 +97,7 @@ export function MonthlyPayrollScreen() {
     try {
       const ym = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`
       const res = await fetch(
-        `http://localhost:8080/api/payrolls/getMonthlySalary?month=${ym}`,
+        `http://13.206.112.19:8080/api/payrolls/getMonthlySalary?month=${ym}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) throw new Error(`API error: ${res.statusText}`)
@@ -123,7 +123,7 @@ export function MonthlyPayrollScreen() {
     if (!auth?.token) return false
     try {
       const res = await fetch(
-        `http://localhost:8080/api/payrolls/getDailySalary?date=${todayStr()}`,
+        `http://13.206.112.19:8080/api/payrolls/getDailySalary?date=${todayStr()}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) return false
@@ -148,7 +148,7 @@ export function MonthlyPayrollScreen() {
     setGeneratingDaily(true)
     try {
       const res = await fetch(
-        `http://localhost:8080/api/payrolls/calculate-daily-salary?date=${todayStr()}`,
+        `http://13.206.112.19:8080/api/payrolls/calculate-daily-salary?date=${todayStr()}`,
         { method: "POST", headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) throw new Error(await res.text())
@@ -165,7 +165,7 @@ export function MonthlyPayrollScreen() {
     try {
       const ym = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,"0")}`
       const res = await fetch(
-        `http://localhost:8080/api/payrolls/generateMonthlyPayroll?month=${ym}`,
+        `http://13.206.112.19:8080/api/payrolls/generateMonthlyPayroll?month=${ym}`,
         { method: "POST", headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) throw new Error(`API error: ${res.statusText}`)

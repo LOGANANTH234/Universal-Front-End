@@ -62,7 +62,7 @@ export default function DailyAttendanceSummaryScreen() {
         })
 
         const res = await fetch(
-          `http://localhost:8080/api/live-attendance/summary-history?${params}`,
+          `http://13.206.112.19:8080/api/live-attendance/summary-history?${params}`,
           { headers: { Authorization: `Bearer ${auth.token}` } }
         )
         if (!res.ok) throw new Error(`API error: ${res.statusText}`)
