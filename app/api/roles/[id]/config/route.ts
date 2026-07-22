@@ -6,7 +6,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     console.log("[v0] API: Fetching role config for role:", roleId)
 
-    const response = await fetch(`http://localhost:8080/api/roles/${roleId}/config`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/roles/${roleId}/config`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

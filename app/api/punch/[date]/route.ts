@@ -13,7 +13,7 @@ export async function GET(
       )
     }
 
-    const backendUrl = `http://localhost:8080/api/punch/${encodeURIComponent(date)}`
+    const backendUrl = `http://13.206.112.19:8080/api/punch/${encodeURIComponent(date)}`
 
     console.log("[v0] Fetching punches from backend:", backendUrl)
 

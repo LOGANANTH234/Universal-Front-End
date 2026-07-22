@@ -7,7 +7,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     console.log("[v0] API: Saving role config for role:", roleId, config)
 
-    const response = await fetch(`http://localhost:8080/api/roles/${roleId}/save`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/roles/${roleId}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

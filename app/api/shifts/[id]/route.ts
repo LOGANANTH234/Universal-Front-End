@@ -3,7 +3,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     const authHeader = request.headers.get("Authorization")
     const { id } = await params
 
-    const response = await fetch(`http://localhost:8080/api/shifts/${id}`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/shifts/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const { id } = await params
     const body = await request.json()
     
-    const response = await fetch(`http://localhost:8080/api/shifts/${id}`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/shifts/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const authHeader = request.headers.get("Authorization")
     const { id } = await params
 
-    const response = await fetch(`http://localhost:8080/api/shifts/${id}`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/shifts/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

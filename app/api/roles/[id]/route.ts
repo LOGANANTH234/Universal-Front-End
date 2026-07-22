@@ -3,7 +3,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const { id } = await params
     const authHeader = request.headers.get("Authorization")
 
-    const response = await fetch(`http://localhost:8080/api/roles/${id}`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/roles/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const authHeader = request.headers.get("Authorization")
     const body = await request.json()
 
-    const response = await fetch(`http://localhost:8080/api/roles/update/${id}`, {
+    const response = await fetch(`http://13.206.112.19:8080/api/roles/update/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
