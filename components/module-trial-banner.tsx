@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, createContext, useContext } from "react"
 import { useRouter } from "next/navigation"
 import { Clock, ShieldAlert, X, ArrowLeft } from "lucide-react"
 import { fetchModuleTrial, ModuleTrialInfo } from "@/lib/api/module-trials"
+
+const TrialBannerContext = createContext<boolean>(false)
 
 interface ModuleTrialBannerProps {
   moduleCode?: string
@@ -33,12 +35,14 @@ function formatValidTill(validTill: string | null): string | null {
 }
 
 export function ModuleTrialBanner({ moduleCode, fallbackModuleCode, inlineLockout, children }: ModuleTrialBannerProps) {
+  const isAlreadyInTrialContext = useContext(TrialBannerContext)
   const [trial, setTrial] = useState<ModuleTrialInfo | null>(null)
   const [isDismissed, setIsDismissed] = useState(false)
   const [copied, setCopied] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
+    if (isAlreadyInTrialContext) return
     if (!moduleCode && !fallbackModuleCode) return
 
     let isMounted = true
@@ -67,7 +71,7 @@ export function ModuleTrialBanner({ moduleCode, fallbackModuleCode, inlineLockou
     }
   }, [moduleCode, fallbackModuleCode])
 
-  if (!trial || !trial.isTrialActive) {
+  if (isAlreadyInTrialContext || !trial || !trial.isTrialActive) {
     return <>{children}</>
   }
 
@@ -168,7 +172,7 @@ export function ModuleTrialBanner({ moduleCode, fallbackModuleCode, inlineLockou
   const isUrgent = daysLeft <= 3
 
   return (
-    <>
+    <TrialBannerContext.Provider value={true}>
       {!isDismissed && (
         <div
           className={`w-full border-b transition-all duration-300 ${
@@ -212,6 +216,6 @@ export function ModuleTrialBanner({ moduleCode, fallbackModuleCode, inlineLockou
         </div>
       )}
       {children}
-    </>
+    </TrialBannerContext.Provider>
   )
 }
