@@ -7,9 +7,10 @@ import { useRouter, usePathname } from "next/navigation"
 import { useAuth } from "@/lib/contexts/auth-context"
 import { getRequiredModule } from "@/lib/routes-config"
 import { Loader2 } from "lucide-react"
+import { ModuleTrialBanner } from "@/components/module-trial-banner"
 
 interface RouteGuardProps {
-  children: React.ReactNode
+  children?: React.ReactNode
   requiredModule?: string
 }
 
@@ -60,6 +61,13 @@ export function RouteGuard({ children, requiredModule }: RouteGuardProps) {
     )
   }
 
-  // Render children if access is granted
-  return <>{children}</>
+  const activeModule = requiredModule || getRequiredModule(pathname)
+
+  // Render children if access is granted with trial banner on top
+  return (
+    <ModuleTrialBanner moduleCode={activeModule}>
+      {children}
+    </ModuleTrialBanner>
+  )
 }
+

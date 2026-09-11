@@ -15,7 +15,9 @@ export const MODULES = {
   VIEW_EDIT_PUNCHES: "VIEW_EDIT_PUNCHES",
   SALARY: "SALARY",
   WARNING: "WARNING",
-Advance_Management: "ADVANCE_MANAGEMENT",
+  Advance_Management: "ADVANCE_MANAGEMENT",
+  SETTINGS: "SETTINGS",
+  LEAVE_MANAGEMENT: "LEAVE_MANAGEMENT",
 } as const
 
 // Action codes from backend
@@ -78,6 +80,17 @@ export const ACTIONS = {
 
   // Warning
   WARNING_VIEW: "WARNING_VIEW",
+
+  // Settings
+  SETTINGS_VIEW: "SETTINGS_VIEW",
+  SETTINGS_EDIT: "SETTINGS_EDIT",
+
+  // Leave Management
+  LEAVE_VIEW: "LEAVE_VIEW",
+  LEAVE_APPLY: "LEAVE_APPLY",
+  LEAVE_APPROVE: "LEAVE_APPROVE",
+  LEAVE_CANCEL: "LEAVE_CANCEL",
+  LEAVE_POLICY_EDIT: "LEAVE_POLICY_EDIT",
 } as const
 
 export function getAllModulesWithActions() {
@@ -186,11 +199,30 @@ export function getAllModulesWithActions() {
       ],
     },
 
-     {
+    {
       moduleCode: MODULES.Advance_Management,
       moduleName: "Advance Management",
       actions: [
        
+      ],
+    },
+    {
+      moduleCode: MODULES.SETTINGS,
+      moduleName: "Settings",
+      actions: [
+        { actionCode: ACTIONS.SETTINGS_VIEW, actionName: "View Settings" },
+        { actionCode: ACTIONS.SETTINGS_EDIT, actionName: "Edit Settings" },
+      ],
+    },
+    {
+      moduleCode: MODULES.LEAVE_MANAGEMENT,
+      moduleName: "Leave Management",
+      actions: [
+        { actionCode: ACTIONS.LEAVE_VIEW, actionName: "View Leaves" },
+        { actionCode: ACTIONS.LEAVE_APPLY, actionName: "Apply Leave" },
+        { actionCode: ACTIONS.LEAVE_APPROVE, actionName: "Approve / Reject Leave" },
+        { actionCode: ACTIONS.LEAVE_CANCEL, actionName: "Cancel Leave" },
+        { actionCode: ACTIONS.LEAVE_POLICY_EDIT, actionName: "Edit Policies" },
       ],
     },
   ]

@@ -34,31 +34,31 @@ interface ApiEmployee {
 // Per-employee generation status tracked during bulk generate
 type GenStatus = "idle" | "generating" | "done" | "failed"
 
-const BASE   = "http://13.206.112.19:8080/api/pdf"
+const BASE = "http://13.206.112.19:8080/api/pdf"
 const SALARY = "http://13.206.112.19:8080/api/payrolls"
 
 export function GeneratePayslipScreen() {
-  const [selectedEmployee, setSelectedEmployee]   = useState<string>("")
-  const [selectedType, setSelectedType]           = useState<string>("monthly")
-  const [selectedDate, setSelectedDate]           = useState<Date>(new Date())
-  const [selectedStatus, setSelectedStatus]       = useState<string>("")
-  const [searchQuery, setSearchQuery]             = useState<string>("")
-  const [isDailyCalendarOpen, setIsDailyCalendarOpen]     = useState(false)
-  const [isWeeklyCalendarOpen, setIsWeeklyCalendarOpen]   = useState(false)
+  const [selectedEmployee, setSelectedEmployee] = useState<string>("")
+  const [selectedType, setSelectedType] = useState<string>("monthly")
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [selectedStatus, setSelectedStatus] = useState<string>("")
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [isDailyCalendarOpen, setIsDailyCalendarOpen] = useState(false)
+  const [isWeeklyCalendarOpen, setIsWeeklyCalendarOpen] = useState(false)
   const [isMonthlyCalendarOpen, setIsMonthlyCalendarOpen] = useState(false)
-  const [apiEmployees, setApiEmployees]           = useState<ApiEmployee[]>([])
+  const [apiEmployees, setApiEmployees] = useState<ApiEmployee[]>([])
   const [isLoadingEmployees, setIsLoadingEmployees] = useState(false)
-// ── Preview error modal ────────────────────────────────────────────────────
-const [previewErrorModalOpen, setPreviewErrorModalOpen] = useState(false)
-const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<string>("")
+  // ── Preview error modal ────────────────────────────────────────────────────
+  const [previewErrorModalOpen, setPreviewErrorModalOpen] = useState(false)
+  const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<string>("")
   // ── Zero salary warning modal ──────────────────────────────────────────────
   const [showZeroSalaryWarning, setShowZeroSalaryWarning] = useState(false)
 
   // ── Bulk generate progress modal ──────────────────────────────────────────
   const [showGenerateModal, setShowGenerateModal] = useState(false)
-  const [genStatusMap, setGenStatusMap]           = useState<Record<string, GenStatus>>({})
-  const [bulkGenError, setBulkGenError]           = useState<Record<string, string>>({})
-  const [generateStarted, setGenerateStarted]     = useState(false)
+  const [genStatusMap, setGenStatusMap] = useState<Record<string, GenStatus>>({})
+  const [bulkGenError, setBulkGenError] = useState<Record<string, string>>({})
+  const [generateStarted, setGenerateStarted] = useState(false)
 
   // ── Salary calculation status (shown inside the progress modal) ────────────
   type CalcPhase = "idle" | "calculating" | "done" | "failed"
@@ -66,19 +66,19 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
   const [calcError, setCalcError] = useState<string | null>(null)
 
   // ── Preview state ──────────────────────────────────────────────────────────
-  const [previewOpen, setPreviewOpen]           = useState(false)
-  const [previewName, setPreviewName]           = useState<string>("")
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewName, setPreviewName] = useState<string>("")
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
-  const [previewError, setPreviewError]         = useState(false)
-  const [pdfPages, setPdfPages]                 = useState<string[]>([])
-  const [currentPage, setCurrentPage]           = useState(1)
+  const [previewError, setPreviewError] = useState(false)
+  const [pdfPages, setPdfPages] = useState<string[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
 
   // ── Per-employee generate tracking ────────────────────────────────────────
   const [singleGenStatus, setSingleGenStatus] = useState<Record<string, GenStatus>>({})
-  const [singleGenError, setSingleGenError]   = useState<Record<string, string>>({})
+  const [singleGenError, setSingleGenError] = useState<Record<string, string>>({})
 
   // ── Error modal (no-salary) ────────────────────────────────────────────────
-  const [errorModalOpen, setErrorModalOpen]     = useState(false)
+  const [errorModalOpen, setErrorModalOpen] = useState(false)
   const [errorModalEmployee, setErrorModalEmployee] = useState<string>("")
 
   const NO_SALARY_MESSAGE =
@@ -114,7 +114,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
 
   // ── Build salary calculation URL based on type ─────────────────────────────
   const buildCalcUrl = (): string => {
-    if (selectedType === "daily")  return `${SALARY}/calculate-daily-salary?date=${getDateParam()}`
+    if (selectedType === "daily") return `${SALARY}/calculate-daily-salary?date=${getDateParam()}`
     if (selectedType === "weekly") return `${SALARY}/GenerateWeeklySalary?anyDateInWeek=${getDateParam()}`
     return `${SALARY}/generateMonthlyPayroll?month=${getDateParam()}`
   }
@@ -124,7 +124,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
     const n = encodeURIComponent(employeeName)
     const d = getDateParam()
     if (selectedType === "monthly") return `${BASE}/payslip/generate/monthly/${n}?month=${d}`
-    if (selectedType === "daily")   return `${BASE}/payslip/generate/daily/${n}?date=${d}`
+    if (selectedType === "daily") return `${BASE}/payslip/generate/daily/${n}?date=${d}`
     return `${BASE}/payslip/generate/weekly/${n}?date=${d}`
   }
 
@@ -132,7 +132,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
     const n = encodeURIComponent(employeeName)
     const d = getDateParam()
     if (selectedType === "monthly") return `${BASE}/payslip/preview/monthly/${n}?month=${d}`
-    if (selectedType === "daily")   return `${BASE}/payslip/preview/daily/${n}?date=${d}`
+    if (selectedType === "daily") return `${BASE}/payslip/preview/daily/${n}?date=${d}`
     return `${BASE}/payslip/preview/weekly/${n}?date=${d}`
   }
 
@@ -163,7 +163,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
     [selectedDate])
 
   const dateBtnLabel = useMemo(() => {
-    if (selectedType === "daily")  return formatDateShort(selectedDate)
+    if (selectedType === "daily") return formatDateShort(selectedDate)
     if (selectedType === "weekly") return weekRangeDisplay
     return `${MONTHS[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`
   }, [selectedType, selectedDate, weekRangeDisplay])
@@ -173,7 +173,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
     let r = apiEmployees
     if (selectedEmployee) r = r.filter(p => p.employeeId === selectedEmployee)
     if (selectedStatus === "generated") r = r.filter(p => p.paySlipGenerated === true)
-    if (selectedStatus === "pending")   r = r.filter(p => p.paySlipGenerated === false)
+    if (selectedStatus === "pending") r = r.filter(p => p.paySlipGenerated === false)
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       r = r.filter(p =>
@@ -274,7 +274,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
     }
 
     run()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showGenerateModal, generateStarted])
 
   // ── Open the progress modal ────────────────────────────────────────────────
@@ -368,11 +368,11 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
   }
 
   // ── Progress counts ────────────────────────────────────────────────────────
-  const doneCount    = Object.values(genStatusMap).filter(s => s === "done").length
-  const failedCount  = Object.values(genStatusMap).filter(s => s === "failed").length
-  const totalCount   = allEmployeeNames.length
+  const doneCount = Object.values(genStatusMap).filter(s => s === "done").length
+  const failedCount = Object.values(genStatusMap).filter(s => s === "failed").length
+  const totalCount = allEmployeeNames.length
   const isAllSettled = (doneCount + failedCount === totalCount && totalCount > 0) &&
-                       calcPhase !== "calculating"
+    calcPhase !== "calculating"
 
   const handleClearFilters = () => {
     setSelectedEmployee(""); setSelectedType("monthly")
@@ -397,7 +397,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
 
       const arrayBuffer = await res.arrayBuffer()
 
-      const PDFJS_CDN    = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+      const PDFJS_CDN = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
       const PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
 
       if (!(window as any).pdfjsLib) {
@@ -420,7 +420,7 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
         const page = await pdf.getPage(i)
         const viewport = page.getViewport({ scale: 1.5 })
         const canvas = document.createElement("canvas")
-        canvas.width  = viewport.width
+        canvas.width = viewport.width
         canvas.height = viewport.height
         const ctx = canvas.getContext("2d")!
         await page.render({ canvasContext: ctx, viewport }).promise
@@ -428,15 +428,15 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
       }
 
       setPdfPages(pages)
-   } catch (err) {
-  console.error("[payslip] preview error:", err)
-  setPreviewOpen(false)          // close the PDF viewer
-  setPdfPages([])
-  setPreviewErrorModalEmployee(employeeName)
-  setPreviewErrorModalOpen(true) // open the dedicated error modal
-} finally {
-  setIsLoadingPreview(false)
-}
+    } catch (err) {
+      console.error("[payslip] preview error:", err)
+      setPreviewOpen(false)          // close the PDF viewer
+      setPdfPages([])
+      setPreviewErrorModalEmployee(employeeName)
+      setPreviewErrorModalOpen(true) // open the dedicated error modal
+    } finally {
+      setIsLoadingPreview(false)
+    }
   }
 
   // ── Calc phase label helpers ───────────────────────────────────────────────
@@ -847,11 +847,11 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
                   return next
                 })
               }}
-                className="rounded-lg h-10 flex-1 bg-blue-600 hover:bg-blue-700"
+              className="rounded-lg h-10 flex-1 bg-blue-600 hover:bg-blue-700"
             >
               Dismiss
             </Button>
-            
+
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -917,70 +917,70 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
           )}
         </DialogContent>
       </Dialog>
-{/* ════════════════════════════════════════════════════════════════════
+      {/* ════════════════════════════════════════════════════════════════════
     PREVIEW — NO SALARY ERROR MODAL
 ════════════════════════════════════════════════════════════════════ */}
-<Dialog open={previewErrorModalOpen} onOpenChange={setPreviewErrorModalOpen}>
-  <DialogContent className="sm:max-w-md">
-    <DialogHeader>
-      <DialogTitle className="flex items-center gap-2.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-          <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-        </span>
-        Salary Not Found
-      </DialogTitle>
-    </DialogHeader>
+      <Dialog open={previewErrorModalOpen} onOpenChange={setPreviewErrorModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+                <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </span>
+              Salary Not Found
+            </DialogTitle>
+          </DialogHeader>
 
-    {/* Employee context */}
-    {previewErrorModalEmployee && (
-      <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg bg-muted/60 border border-border">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-semibold select-none">
-          {previewErrorModalEmployee.charAt(0).toUpperCase()}
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-foreground truncate">{previewErrorModalEmployee}</p>
-          <p className="text-xs text-muted-foreground capitalize">
-            {selectedType} · {dateBtnLabel}
-          </p>
-        </div>
-      </div>
-    )}
+          {/* Employee context */}
+          {previewErrorModalEmployee && (
+            <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg bg-muted/60 border border-border">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-semibold select-none">
+                {previewErrorModalEmployee.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">{previewErrorModalEmployee}</p>
+                <p className="text-xs text-muted-foreground capitalize">
+                  {selectedType} · {dateBtnLabel}
+                </p>
+              </div>
+            </div>
+          )}
 
-    {/* Main message */}
-    <div className="flex gap-3 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-4 py-3">
-      <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-      <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
-        {NO_SALARY_MESSAGE}
-      </p>
-    </div>
+          {/* Main message */}
+          <div className="flex gap-3 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-4 py-3">
+            <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
+              {NO_SALARY_MESSAGE}
+            </p>
+          </div>
 
-    {/* Step guide */}
-    <ol className="space-y-2 text-sm text-muted-foreground pl-1">
-      {[
-        "Go to the Salary tab in the sidebar",
-        `Select the ${selectedType} salary type and the same period`,
-        "Click to calculate",
-        "Return here and click Preview again",
-      ].map((step, idx) => (
-        <li key={idx} className="flex items-start gap-2.5">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted border border-border text-[11px] font-semibold text-foreground mt-0.5">
-            {idx + 1}
-          </span>
-          <span className="leading-relaxed">{step}</span>
-        </li>
-      ))}
-    </ol>
+          {/* Step guide */}
+          <ol className="space-y-2 text-sm text-muted-foreground pl-1">
+            {[
+              "Go to the Salary tab in the sidebar",
+              `Select the ${selectedType} salary type and the same period`,
+              "Click to calculate",
+              "Return here and click Preview again",
+            ].map((step, idx) => (
+              <li key={idx} className="flex items-start gap-2.5">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted border border-border text-[11px] font-semibold text-foreground mt-0.5">
+                  {idx + 1}
+                </span>
+                <span className="leading-relaxed">{step}</span>
+              </li>
+            ))}
+          </ol>
 
-    <DialogFooter className="gap-2 sm:gap-2 pt-1">
-      <Button
-        onClick={() => setPreviewErrorModalOpen(false)}
-        className="rounded-lg h-10 flex-1 bg-blue-600 hover:bg-blue-700"
-      >
-        Dismiss
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+          <DialogFooter className="gap-2 sm:gap-2 pt-1">
+            <Button
+              onClick={() => setPreviewErrorModalOpen(false)}
+              className="rounded-lg h-10 flex-1 bg-blue-600 hover:bg-blue-700"
+            >
+              Dismiss
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {/* ── ZERO SALARY WARNING ───────────────────────────────────────────── */}
       <Dialog open={showZeroSalaryWarning} onOpenChange={setShowZeroSalaryWarning}>
         <DialogContent className="sm:max-w-sm">
@@ -1106,17 +1106,16 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
                 return (
                   <div
                     key={`${name}-${idx}`}
-                    className={`rounded-lg border transition-colors ${
-                      isWaiting
-                        ? "border-border bg-muted/30 opacity-50"
-                        : status === "done"
-                          ? "border-green-200 bg-green-50 dark:bg-green-950/30"
-                          : status === "failed"
-                            ? "border-red-200 bg-red-50 dark:bg-red-950/30"
-                            : status === "generating"
-                              ? "border-blue-200 bg-blue-50 dark:bg-blue-950/20"
-                              : "border-border bg-muted/30"
-                    }`}
+                    className={`rounded-lg border transition-colors ${isWaiting
+                      ? "border-border bg-muted/30 opacity-50"
+                      : status === "done"
+                        ? "border-green-200 bg-green-50 dark:bg-green-950/30"
+                        : status === "failed"
+                          ? "border-red-200 bg-red-50 dark:bg-red-950/30"
+                          : status === "generating"
+                            ? "border-blue-200 bg-blue-50 dark:bg-blue-950/20"
+                            : "border-border bg-muted/30"
+                      }`}
                   >
                     {/* ── Top row: icon + name + badge ── */}
                     <div className="flex items-center justify-between p-3">
@@ -1131,17 +1130,16 @@ const [previewErrorModalEmployee, setPreviewErrorModalEmployee] = useState<strin
                                 ? <Loader2 className="h-4 w-4 text-blue-600 shrink-0 animate-spin" />
                                 : <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
                         }
-                        <span className={`text-sm font-medium truncate ${
-                          isWaiting
-                            ? "text-muted-foreground"
-                            : status === "done"
-                              ? "text-green-700 dark:text-green-400"
-                              : status === "failed"
-                                ? "text-red-600 dark:text-red-400"
-                                : status === "generating"
-                                  ? "text-blue-700 dark:text-blue-400"
-                                  : "text-foreground"
-                        }`}>
+                        <span className={`text-sm font-medium truncate ${isWaiting
+                          ? "text-muted-foreground"
+                          : status === "done"
+                            ? "text-green-700 dark:text-green-400"
+                            : status === "failed"
+                              ? "text-red-600 dark:text-red-400"
+                              : status === "generating"
+                                ? "text-blue-700 dark:text-blue-400"
+                                : "text-foreground"
+                          }`}>
                           {name}
                         </span>
                       </div>

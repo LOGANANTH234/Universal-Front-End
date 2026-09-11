@@ -101,7 +101,7 @@ export function DailySalaryScreen() {
         `http://13.206.112.19:8080/api/payrolls/getDailySalary?date=${d}`,
         { headers: { Authorization: `Bearer ${auth.token}` } },
       )
-							  
+
       if (!res.ok) throw new Error(`API error: ${res.statusText}`)
       setData(await res.json())
     } catch (err) {
@@ -156,15 +156,15 @@ export function DailySalaryScreen() {
   const totals = useMemo(() =>
     filteredData.reduce(
       (acc, r) => ({
-        regular:   acc.regular   + (r.regularSalary        || 0),
-        ot:        acc.ot        + (r.OvertimeSalary        || 0),
-        allowance: acc.allowance + (r.extraAllowance        || 0),
-        penalty:   acc.penalty   + (r.penaltyAmountDeducted || 0),
-        net:       acc.net       + (r.totalPay              || 0),
+        regular: acc.regular + (r.regularSalary || 0),
+        ot: acc.ot + (r.OvertimeSalary || 0),
+        allowance: acc.allowance + (r.extraAllowance || 0),
+        penalty: acc.penalty + (r.penaltyAmountDeducted || 0),
+        net: acc.net + (r.totalPay || 0),
       }),
       { regular: 0, ot: 0, allowance: 0, penalty: 0, net: 0 },
     ),
-  [filteredData])
+    [filteredData])
 
   const dateLabel = selectedDate.toLocaleDateString("en-US", {
     weekday: "short", year: "numeric", month: "short", day: "numeric",
@@ -176,11 +176,11 @@ export function DailySalaryScreen() {
     <div className="w-full space-y-4 px-6 py-6">
 
       {/* ── Filter bar ──────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-800 p-4">
         <div className="flex flex-wrap gap-4 items-end">
 
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            <Label className="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">
               Employee
             </Label>
             <SearchableComboBox
@@ -194,7 +194,7 @@ export function DailySalaryScreen() {
 
           {/* ── Date picker with prev / next navigation ── */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            <Label className="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">
               Date
             </Label>
             <div className="flex items-center gap-1">
@@ -202,7 +202,7 @@ export function DailySalaryScreen() {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-9 w-9 border-gray-300 bg-white hover:bg-gray-50 text-gray-500 flex-shrink-0"
+                className="h-9 w-9 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-500 dark:text-slate-400 flex-shrink-0"
                 onClick={handlePrevDay}
                 title="Previous day"
               >
@@ -214,13 +214,13 @@ export function DailySalaryScreen() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="h-9 px-3 gap-2 text-sm font-normal bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                    className="h-9 px-3 gap-2 text-sm font-normal bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700"
                   >
-                    <CalendarIcon className="h-3.5 w-3.5 text-gray-400" />
+                    <CalendarIcon className="h-3.5 w-3.5 text-gray-400 dark:text-slate-500" />
                     {dateLabel}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 dark:bg-slate-900 dark:border-slate-800" align="start">
                   <MultiViewCalendar
                     selected={selectedDate}
                     onSelect={d => { setSelectedDate(d); setIsCalendarOpen(false) }}
@@ -234,7 +234,7 @@ export function DailySalaryScreen() {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-9 w-9 border-gray-300 bg-white hover:bg-gray-50 text-gray-500 flex-shrink-0"
+                className="h-9 w-9 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-500 dark:text-slate-400 flex-shrink-0"
                 onClick={handleNextDay}
                 title="Next day"
               >
@@ -260,20 +260,20 @@ export function DailySalaryScreen() {
 
       {/* ── Error ───────────────────────────────────────────────────────── */}
       {error && (
-        <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm">
+        <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 text-sm">
           <AlertCircle className="h-4 w-4 flex-shrink-0" />
           {error}
         </div>
       )}
 
       {/* ── Table card ──────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-800 overflow-hidden">
 
         {/* Card title */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
-          <h2 className="text-sm font-semibold text-gray-800">Daily Salary Records</h2>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-slate-800">
+          <h2 className="text-sm font-semibold text-gray-800 dark:text-slate-100">Daily Salary Records</h2>
           {!loading && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-slate-500">
               {filteredData.length} employee{filteredData.length !== 1 ? "s" : ""}
             </span>
           )}
@@ -281,25 +281,25 @@ export function DailySalaryScreen() {
 
         <div className="overflow-x-auto">
           {loading ? (
-            <div className="py-14 text-center text-sm text-gray-400">Loading salary data…</div>
+            <div className="py-14 text-center text-sm text-gray-400 dark:text-slate-500">Loading salary data…</div>
           ) : (
             <table className="w-full text-sm">
 
               {/* ── Single header row ── */}
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-5 py-3 text-left   text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Employee Name</th>
-                  <th className="px-5 py-3 text-left   text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Work Date</th>
-                  <th className="px-5 py-3 text-center text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Regular Req. Hours</th>
-                  <th className="px-5 py-3 text-center text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Regular Paid Hours</th>
-                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Regular Salary</th>
-                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Overtime</th>
-                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Allowance</th>
-                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Gross Pay</th>
-                  <th className="px-5 py-3 text-center text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Warnings</th>
-                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Penalty Mins</th>
-                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 whitespace-nowrap border-r border-gray-300">Penalty Amt</th>
-                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 whitespace-nowrap">Net Salary</th>
+                <tr className="border-b border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/80">
+                  <th className="px-5 py-3 text-left   text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Employee Name</th>
+                  <th className="px-5 py-3 text-left   text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Work Date</th>
+                  <th className="px-5 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Regular Req. Hours</th>
+                  <th className="px-5 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Regular Paid Hours</th>
+                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Regular Salary</th>
+                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Overtime</th>
+                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Allowance</th>
+                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Gross Pay</th>
+                  <th className="px-5 py-3 text-center text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Warnings</th>
+                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Penalty Mins</th>
+                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">Penalty Amt</th>
+                  <th className="px-5 py-3 text-right  text-xs font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap">Net Salary</th>
                 </tr>
               </thead>
 
@@ -307,84 +307,84 @@ export function DailySalaryScreen() {
               <tbody>
                 {filteredData.length === 0 ? (
                   <tr>
-                    <td colSpan={12} className="py-14 text-center text-sm text-gray-400">
+                    <td colSpan={12} className="py-14 text-center text-sm text-gray-400 dark:text-slate-500">
                       No salary records found for the selected date and employee.
                     </td>
                   </tr>
                 ) : (
                   filteredData.map(r => {
                     const penaltyAmt = r.penaltyAmountDeducted || 0
-                    const gross      = (r.regularSalary  || 0)
-                                     + (r.OvertimeSalary || 0)
-                                     + (r.extraAllowance || 0)
-                                     + penaltyAmt
+                    const gross = (r.regularSalary || 0)
+                      + (r.OvertimeSalary || 0)
+                      + (r.extraAllowance || 0)
+                      + penaltyAmt
 
                     const paidMins = r.salaryMinutes || 0
-                    const reqMins  = parseHrStr(r.payableMinutes)
-                    const isFull    = reqMins > 0 && paidMins >= reqMins
+                    const reqMins = parseHrStr(r.payableMinutes)
+                    const isFull = reqMins > 0 && paidMins >= reqMins
                     const isPartial = paidMins > 0 && !isFull
 
                     return (
                       <tr
                         key={r.id}
                         onClick={() => setDrilldownRecord(r)}
-                        className="border-b border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors"
+                        className="border-b border-gray-200 dark:border-slate-800 hover:bg-blue-50 dark:hover:bg-slate-800/60 cursor-pointer transition-colors"
                       >
-                        <td className="px-5 py-3.5 font-medium text-gray-800 whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 font-medium text-gray-800 dark:text-slate-100 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {r.employeeName}
                         </td>
-                        <td className="px-5 py-3.5 text-gray-500 whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-gray-500 dark:text-slate-400 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {r.workDate}
                         </td>
-                        <td className="px-5 py-3.5 text-center whitespace-nowrap border-r border-gray-300">
-                          <span className="font-mono text-xs text-gray-500">
+                        <td className="px-5 py-3.5 text-center whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
+                          <span className="font-mono text-xs text-gray-500 dark:text-slate-400">
                             {r.payableMinutes || "—"}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-center whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-center whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           <span className={
                             "font-mono text-xs font-semibold px-2 py-0.5 rounded " +
                             (isFull
-                              ? "text-green-700 bg-green-50"
+                              ? "text-green-700 bg-green-50 dark:text-green-400 dark:bg-green-950/50"
                               : isPartial
-                                ? "text-amber-600 bg-amber-50"
-                                : "text-red-500 bg-red-50")
+                                ? "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/50"
+                                : "text-red-500 bg-red-50 dark:text-red-400 dark:bg-red-950/50")
                           }>
                             {r.workDuration || "—"}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-right font-mono text-gray-700 whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-right font-mono text-gray-700 dark:text-slate-300 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {fmt(r.regularSalary)}
                         </td>
-                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {(r.OvertimeSalary || 0) > 0
-                            ? <span className="text-gray-700">{fmt(r.OvertimeSalary)}</span>
-                            : <span className="text-gray-300">—</span>}
+                            ? <span className="text-gray-700 dark:text-slate-300">{fmt(r.OvertimeSalary)}</span>
+                            : <span className="text-gray-300 dark:text-slate-600">—</span>}
                         </td>
-                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {(r.extraAllowance || 0) > 0
-                            ? <span className="text-gray-700">{fmt(r.extraAllowance)}</span>
-                            : <span className="text-gray-300">—</span>}
+                            ? <span className="text-gray-700 dark:text-slate-300">{fmt(r.extraAllowance)}</span>
+                            : <span className="text-gray-300 dark:text-slate-600">—</span>}
                         </td>
-                        <td className="px-5 py-3.5 text-right font-mono font-semibold text-gray-800 whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-right font-mono font-semibold text-gray-800 dark:text-slate-100 whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {fmt(gross)}
                         </td>
-                        <td className="px-5 py-3.5 text-center border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-center border-r border-gray-300 dark:border-slate-700">
                           {r.warningCount > 0
-                            ? <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-xs">{r.warningCount}</Badge>
-                            : <span className="text-slate-300 text-xs">—</span>}
+                            ? <Badge className="bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800 text-xs">{r.warningCount}</Badge>
+                            : <span className="text-slate-300 dark:text-slate-600 text-xs">—</span>}
                         </td>
-                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {hasPenalty(r.penaltyMinutes)
-                            ? <span className="text-red-500 font-medium">{r.penaltyMinutes}</span>
-                            : <span className="text-gray-300">—</span>}
+                            ? <span className="text-red-500 dark:text-red-400 font-medium">{r.penaltyMinutes}</span>
+                            : <span className="text-gray-300 dark:text-slate-600">—</span>}
                         </td>
-                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300">
+                        <td className="px-5 py-3.5 text-right font-mono whitespace-nowrap border-r border-gray-300 dark:border-slate-700">
                           {penaltyAmt > 0
-                            ? <span className="text-red-500 font-medium">{fmt(penaltyAmt)}</span>
-                            : <span className="text-gray-300">—</span>}
+                            ? <span className="text-red-500 dark:text-red-400 font-medium">{fmt(penaltyAmt)}</span>
+                            : <span className="text-gray-300 dark:text-slate-600">—</span>}
                         </td>
-                        <td className="px-5 py-3.5 text-right font-mono font-semibold text-blue-600 whitespace-nowrap">
+                        <td className="px-5 py-3.5 text-right font-mono font-semibold text-blue-600 dark:text-blue-400 whitespace-nowrap">
                           {fmt(r.totalPay)}
                         </td>
                       </tr>
@@ -396,25 +396,25 @@ export function DailySalaryScreen() {
               {/* ── Footer totals ── */}
               {filteredData.length > 1 && (
                 <tfoot>
-                  <tr className="border-t border-gray-200 bg-gray-50 font-semibold text-sm">
-                    <td className="px-5 py-3 text-gray-600" colSpan={4}>
+                  <tr className="border-t border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/80 font-semibold text-sm">
+                    <td className="px-5 py-3 text-gray-600 dark:text-slate-300" colSpan={4}>
                       Total{" "}
-                      <span className="font-normal text-gray-400 text-xs">
+                      <span className="font-normal text-gray-400 dark:text-slate-500 text-xs">
                         ({filteredData.length} employees)
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-right font-mono text-gray-700">{fmt(totals.regular)}</td>
-                    <td className="px-5 py-3 text-right font-mono text-gray-700">{fmt(totals.ot)}</td>
-                    <td className="px-5 py-3 text-right font-mono text-gray-700">{fmt(totals.allowance)}</td>
-                    <td className="px-5 py-3 text-right font-mono text-gray-800 font-bold">
+                    <td className="px-5 py-3 text-right font-mono text-gray-700 dark:text-slate-300">{fmt(totals.regular)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-gray-700 dark:text-slate-300">{fmt(totals.ot)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-gray-700 dark:text-slate-300">{fmt(totals.allowance)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-gray-800 dark:text-slate-100 font-bold">
                       {fmt(totals.regular + totals.ot + totals.allowance + totals.penalty)}
                     </td>
                     <td className="px-5 py-3" />
                     <td className="px-5 py-3" />
-                    <td className="px-5 py-3 text-right font-mono text-red-500">
+                    <td className="px-5 py-3 text-right font-mono text-red-500 dark:text-red-400">
                       {totals.penalty > 0 ? fmt(totals.penalty) : "—"}
                     </td>
-                    <td className="px-5 py-3 text-right font-mono font-bold text-blue-600">
+                    <td className="px-5 py-3 text-right font-mono font-bold text-blue-600 dark:text-blue-400">
                       {fmt(totals.net)}
                     </td>
                   </tr>
@@ -428,16 +428,16 @@ export function DailySalaryScreen() {
 
       {/* ── Generate dialog ──────────────────────────────────────────────── */}
       <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-sm dark:bg-slate-900 dark:border-slate-800">
           <DialogHeader>
-            <DialogTitle>Generate Daily Salary</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="dark:text-slate-100">Generate Daily Salary</DialogTitle>
+            <DialogDescription className="dark:text-slate-400">
               Salary will be calculated for all employees for{" "}
-              <span className="font-semibold text-gray-900">{dateLabel}</span>.
+              <span className="font-semibold text-gray-900 dark:text-slate-200">{dateLabel}</span>.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setShowGenerateDialog(false)}>Cancel</Button>
+            <Button variant="outline" className="dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700" onClick={() => setShowGenerateDialog(false)}>Cancel</Button>
             <Button onClick={handleConfirmGenerate} className="bg-blue-600 hover:bg-blue-700 text-white">
               Generate
             </Button>

@@ -46,11 +46,11 @@ interface PageResponse {
 }
 
 const WARNING_TYPE_BADGES: Record<string, { bg: string; text: string }> = {
-  SHIFT_START: { bg: 'bg-red-100', text: 'text-red-800' },
-  SHIFT_END:   { bg: 'bg-orange-100', text: 'text-orange-800' },
-  ABSENT:      { bg: 'bg-slate-100', text: 'text-slate-800' },
-  EARLY_LEAVE: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-  DEFAULT:     { bg: 'bg-blue-100', text: 'text-blue-800' },
+  SHIFT_START: { bg: 'bg-red-100 dark:bg-red-950/60', text: 'text-red-800 dark:text-red-300' },
+  SHIFT_END: { bg: 'bg-orange-100 dark:bg-orange-950/60', text: 'text-orange-800 dark:text-orange-300' },
+  ABSENT: { bg: 'bg-slate-100 dark:bg-slate-800', text: 'text-slate-800 dark:text-slate-200' },
+  EARLY_LEAVE: { bg: 'bg-yellow-100 dark:bg-yellow-950/60', text: 'text-yellow-800 dark:text-yellow-300' },
+  DEFAULT: { bg: 'bg-blue-100 dark:bg-blue-950/60', text: 'text-blue-800 dark:text-blue-300' },
 }
 
 const PAGE_SIZE_OPTIONS = [100, 200, 300, 400, 500]
@@ -184,24 +184,24 @@ export function WarningsScreen() {
 
   // Pagination helpers
   const startItem = totalElements === 0 ? 0 : pageNo * pageSize + 1
-  const endItem   = Math.min((pageNo + 1) * pageSize, totalElements)
+  const endItem = Math.min((pageNo + 1) * pageSize, totalElements)
 
   // Compute totalPages client-side to guard against stale backend values
   const computedTotalPages = totalElements === 0 ? 0 : Math.ceil(totalElements / pageSize)
   const isFirstPage = pageNo === 0
-  const isLastPage  = endItem >= totalElements
+  const isLastPage = endItem >= totalElements
 
   return (
-    <div className="w-full space-y-6 px-6 py-8">
+    <div className="w-full space-y-6 px-6 py-8 text-slate-900 dark:text-slate-100">
       {/* ── Filters + Pagination Controls ─────────────────────── */}
-      <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-4 shadow-sm">
         <div className="flex flex-wrap gap-4 items-end justify-between">
 
           {/* Left: filters */}
           <div className="flex flex-wrap gap-4 items-end">
             {/* Employee */}
             <div className="space-y-1 flex-shrink-0">
-              <Label className="text-slate-700 font-semibold text-sm">Employee</Label>
+              <Label className="text-slate-700 dark:text-slate-300 font-semibold text-sm">Employee</Label>
               <SearchableComboBox
                 options={employees}
                 value={selectedEmployee}
@@ -213,20 +213,20 @@ export function WarningsScreen() {
 
             {/* Start Date */}
             <div className="space-y-1 flex-shrink-0">
-              <Label className="text-slate-700 font-semibold text-sm">Start Date</Label>
+              <Label className="text-slate-700 dark:text-slate-300 font-semibold text-sm">Start Date</Label>
               <Popover open={isStartCalendarOpen} onOpenChange={setIsStartCalendarOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="h-9 px-2 py-1 justify-start text-left font-normal bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-900 text-sm"
+                    className="h-9 px-2 py-1 justify-start text-left font-normal bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600 text-slate-900 dark:text-slate-100 text-sm"
                   >
-                    <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 flex-shrink-0" />
-                    <span className="text-slate-900 font-medium text-sm">
+                    <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 dark:text-slate-400 flex-shrink-0" />
+                    <span className="text-slate-900 dark:text-slate-100 font-medium text-sm">
                       {startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                     </span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800" align="start">
                   <MultiViewCalendar
                     selected={startDate}
                     onSelect={(date) => { setStartDate(date); setIsStartCalendarOpen(false) }}
@@ -239,20 +239,20 @@ export function WarningsScreen() {
 
             {/* End Date */}
             <div className="space-y-1 flex-shrink-0">
-              <Label className="text-slate-700 font-semibold text-sm">End Date</Label>
+              <Label className="text-slate-700 dark:text-slate-300 font-semibold text-sm">End Date</Label>
               <Popover open={isEndCalendarOpen} onOpenChange={setIsEndCalendarOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="h-9 px-2 py-1 justify-start text-left font-normal bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-900 text-sm"
+                    className="h-9 px-2 py-1 justify-start text-left font-normal bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-slate-600 text-slate-900 dark:text-slate-100 text-sm"
                   >
-                    <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 flex-shrink-0" />
-                    <span className="text-slate-900 font-medium text-sm">
+                    <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 dark:text-slate-400 flex-shrink-0" />
+                    <span className="text-slate-900 dark:text-slate-100 font-medium text-sm">
                       {endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                     </span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800" align="start">
                   <MultiViewCalendar
                     selected={endDate}
                     onSelect={(date) => { setEndDate(date); setIsEndCalendarOpen(false) }}
@@ -270,9 +270,9 @@ export function WarningsScreen() {
             {/* Total record count */}
             {!loading && totalElements > 0 && (
               <div className="space-y-1">
-                <Label className="text-slate-700 font-semibold text-sm">Total Records</Label>
-                <div className="h-9 flex items-center px-3 rounded-md border border-slate-300 bg-slate-50">
-                  <span className="text-sm font-bold text-slate-800">{totalElements.toLocaleString()}</span>
+                <Label className="text-slate-700 dark:text-slate-300 font-semibold text-sm">Total Records</Label>
+                <div className="h-9 flex items-center px-3 rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                  <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{totalElements.toLocaleString()}</span>
                 </div>
               </div>
             )}
@@ -281,15 +281,15 @@ export function WarningsScreen() {
               <>
                 {/* Rows per page */}
                 <div className="space-y-1">
-                  <Label className="text-slate-700 font-semibold text-sm">Rows per page</Label>
+                  <Label className="text-slate-700 dark:text-slate-300 font-semibold text-sm">Rows per page</Label>
                   <Select
                     value={String(pageSize)}
                     onValueChange={(v) => { setPageSize(Number(v)); setPageNo(0) }}
                   >
-                    <SelectTrigger className="h-9 w-24 text-sm bg-white border-slate-300">
+                    <SelectTrigger className="h-9 w-24 text-sm bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100">
                       {PAGE_SIZE_OPTIONS.map((s) => (
                         <SelectItem key={s} value={String(s)}>{s}</SelectItem>
                       ))}
@@ -299,13 +299,13 @@ export function WarningsScreen() {
 
                 {/* Page info + 4 navigation buttons */}
                 <div className="space-y-1">
-                  <Label className="text-slate-700 font-semibold text-sm">
+                  <Label className="text-slate-700 dark:text-slate-300 font-semibold text-sm">
                     Page {pageNo + 1} of {computedTotalPages}
                   </Label>
                   <div className="flex items-center gap-1">
                     <Button
                       variant="outline" size="icon"
-                      className="h-9 w-9 border-slate-300 bg-white"
+                      className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                       onClick={() => setPageNo(0)}
                       disabled={isFirstPage}
                       title="First page"
@@ -314,7 +314,7 @@ export function WarningsScreen() {
                     </Button>
                     <Button
                       variant="outline" size="icon"
-                      className="h-9 w-9 border-slate-300 bg-white"
+                      className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                       onClick={() => setPageNo((p) => Math.max(0, p - 1))}
                       disabled={isFirstPage}
                       title="Previous page"
@@ -323,7 +323,7 @@ export function WarningsScreen() {
                     </Button>
                     <Button
                       variant="outline" size="icon"
-                      className="h-9 w-9 border-slate-300 bg-white"
+                      className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                       onClick={() => setPageNo((p) => Math.min(computedTotalPages - 1, p + 1))}
                       disabled={isLastPage}
                       title="Next page"
@@ -332,7 +332,7 @@ export function WarningsScreen() {
                     </Button>
                     <Button
                       variant="outline" size="icon"
-                      className="h-9 w-9 border-slate-300 bg-white"
+                      className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                       onClick={() => setPageNo(computedTotalPages - 1)}
                       disabled={isLastPage}
                       title="Last page"
@@ -350,18 +350,18 @@ export function WarningsScreen() {
 
       {/* ── Error ─────────────────────────────────────────────── */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
-          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-          <span className="text-red-700">{error}</span>
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 rounded-lg p-4 flex items-center gap-3">
+          <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+          <span className="text-red-700 dark:text-red-300">{error}</span>
         </div>
       )}
 
       {/* ── Table ─────────────────────────────────────────────── */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Warning Records</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Warning Records</h2>
           {!loading && totalElements > 0 && (
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               Showing {startItem}–{endItem} of {totalElements.toLocaleString()} records
             </span>
           )}
@@ -369,18 +369,18 @@ export function WarningsScreen() {
 
         <div className="overflow-x-auto">
           {loading ? (
-            <div className="text-center py-12 text-slate-500">Loading warning data...</div>
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400">Loading warning data...</div>
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="px-6 py-4 text-left font-semibold text-slate-900 border-r border-slate-200">Employee Name</th>
-                  <th className="px-6 py-4 text-left font-semibold text-slate-900 border-r border-slate-200">Warning Date</th>
-                  <th className="px-6 py-4 text-center font-semibold text-slate-900 border-r border-slate-200">Expected Time</th>
-                  <th className="px-6 py-4 text-center font-semibold text-slate-900 border-r border-slate-200">Actual Time</th>
-                  <th className="px-6 py-4 text-center font-semibold text-slate-900 border-r border-slate-200">Late Minutes</th>
-                  <th className="px-6 py-4 text-center font-semibold text-slate-900 border-r border-slate-200">Penalty Applied</th>
-                  <th className="px-6 py-4 text-left font-semibold text-slate-900">Warning Type</th>
+                <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800">
+                  <th className="px-6 py-4 text-left font-semibold text-slate-900 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800">Employee Name</th>
+                  <th className="px-6 py-4 text-left font-semibold text-slate-900 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800">Warning Date</th>
+                  <th className="px-6 py-4 text-center font-semibold text-slate-900 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800">Expected Time</th>
+                  <th className="px-6 py-4 text-center font-semibold text-slate-900 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800">Actual Time</th>
+                  <th className="px-6 py-4 text-center font-semibold text-slate-900 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800">Late Minutes</th>
+                  <th className="px-6 py-4 text-center font-semibold text-slate-900 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800">Penalty Applied</th>
+                  <th className="px-6 py-4 text-left font-semibold text-slate-900 dark:text-slate-200">Warning Type</th>
                 </tr>
               </thead>
               <tbody>
@@ -388,27 +388,27 @@ export function WarningsScreen() {
                   filteredData.map((record) => {
                     const badgeStyle = getWarningBadge(record.warningType)
                     return (
-                      <tr key={record.id} className="border-b border-slate-200 hover:bg-blue-50 transition-colors">
-                        <td className="px-6 py-4 font-medium text-slate-900 border-r border-slate-200">{record.employeeName}</td>
-                        <td className="px-6 py-4 text-slate-700 border-r border-slate-200">{record.warningDate}</td>
-                        <td className="px-6 py-4 text-center border-r border-slate-200">
-                          <span className="text-slate-700 font-medium">{record.expectedTime}</span>
+                      <tr key={record.id} className="border-b border-slate-200 dark:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800">{record.employeeName}</td>
+                        <td className="px-6 py-4 text-slate-700 dark:text-slate-400 border-r border-slate-200 dark:border-slate-800">{record.warningDate}</td>
+                        <td className="px-6 py-4 text-center border-r border-slate-200 dark:border-slate-800">
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{record.expectedTime}</span>
                         </td>
-                        <td className="px-6 py-4 text-center border-r border-slate-200">
-                          <span className="text-slate-700 font-medium">{record.actualTime}</span>
+                        <td className="px-6 py-4 text-center border-r border-slate-200 dark:border-slate-800">
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{record.actualTime}</span>
                         </td>
-                        <td className="px-6 py-4 text-center border-r border-slate-200">
-                          <span className="text-slate-700 font-medium">{record.lateMinutes}</span>
+                        <td className="px-6 py-4 text-center border-r border-slate-200 dark:border-slate-800">
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{record.lateMinutes}</span>
                         </td>
-                        <td className="px-6 py-4 text-center border-r border-slate-200">
+                        <td className="px-6 py-4 text-center border-r border-slate-200 dark:border-slate-800">
                           {record.penaltyApplied ? (
-                            <Badge className="bg-red-100 text-red-800 border-red-300">Yes</Badge>
+                            <Badge className="bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300 border-red-300 dark:border-red-900/60">Yes</Badge>
                           ) : (
-                            <span className="text-slate-400">No</span>
+                            <span className="text-slate-400 dark:text-slate-500">No</span>
                           )}
                         </td>
                         <td className="px-6 py-4">
-                          <Badge className={`${badgeStyle.bg} ${badgeStyle.text} border`}>
+                          <Badge className={`${badgeStyle.bg} ${badgeStyle.text} border border-slate-200/80 dark:border-slate-700/80`}>
                             {record.warningType}
                           </Badge>
                         </td>
@@ -417,7 +417,7 @@ export function WarningsScreen() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={7} className="text-center py-12 text-slate-500">
+                    <td colSpan={7} className="text-center py-12 text-slate-500 dark:text-slate-400">
                       No warning records found for the selected filters.
                     </td>
                   </tr>

@@ -8,9 +8,10 @@ interface TimePickerCompactProps {
   value: string
   onChange: (time: string) => void
   disabled?: boolean
+  align?: "left" | "right"
 }
 
-export function TimePickerCompact({ value, onChange, disabled = false }: TimePickerCompactProps) {
+export function TimePickerCompact({ value, onChange, disabled = false, align = "left" }: TimePickerCompactProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [hours, setHours] = useState<number>(9)
   const [minutes, setMinutes] = useState<number>(0)
@@ -20,13 +21,25 @@ export function TimePickerCompact({ value, onChange, disabled = false }: TimePic
 
   useEffect(() => {
     if (value) {
-      const [h, m] = value.split(":").map(Number)
-      if (!isNaN(h) && !isNaN(m)) {
-        const period = h >= 12 ? "PM" : "AM"
-        const displayHours = h % 12 || 12
-        setHours(displayHours)
-        setMinutes(m)
-        setPeriod(period)
+      const clean = value.trim()
+      const is12Hour = clean.toUpperCase().includes("AM") || clean.toUpperCase().includes("PM")
+      if (is12Hour) {
+        const [timePart, periodPart] = clean.split(/\s+/)
+        const [h, m] = (timePart || "").split(":").map(Number)
+        if (!isNaN(h) && !isNaN(m)) {
+          setHours(h % 12 || 12)
+          setMinutes(m)
+          setPeriod(periodPart?.toUpperCase() === "PM" ? "PM" : "AM")
+        }
+      } else {
+        const [h, m] = clean.split(":").map(Number)
+        if (!isNaN(h) && !isNaN(m)) {
+          const period = h >= 12 ? "PM" : "AM"
+          const displayHours = h % 12 || 12
+          setHours(displayHours)
+          setMinutes(m)
+          setPeriod(period)
+        }
       }
     }
   }, [value])
@@ -79,7 +92,7 @@ export function TimePickerCompact({ value, onChange, disabled = false }: TimePic
       {isOpen && !disabled && (
         <div
           ref={popoverRef}
-          className="absolute top-full mt-1 left-0 bg-background border border-border rounded-lg shadow-lg z-50 min-w-max"
+          className={`absolute top-full mt-1 ${align === "right" ? "right-0" : "left-0"} bg-background border border-border rounded-lg shadow-lg z-50 min-w-max`}
         >
           {/* Time display */}
           <div className="p-2 border-b border-border">

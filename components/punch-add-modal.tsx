@@ -32,10 +32,10 @@ interface PunchAddModalProps {
   onRefresh?: () => Promise<void>
 }
 
-export default function PunchAddModal({ 
+export default function PunchAddModal({
   allPunches,
-  open, 
-  onOpenChange, 
+  open,
+  onOpenChange,
   onAdd,
   onAddPair,
   shiftStart,
@@ -111,7 +111,7 @@ export default function PunchAddModal({
   useEffect(() => {
     const inTime = convert12to24(inHours, inMinutes, inPeriod)
     const outTime = convert12to24(outHours, outMinutes, outPeriod)
-    
+
     // Validate IN punch
     const inPunch = {
       type: 'IN' as const,
@@ -120,7 +120,7 @@ export default function PunchAddModal({
       note: '',
       shift,
     }
-    
+
     const result = validatePunch(inPunch, allPunches, undefined, shiftStart, shiftEnd)
     setValidationResult(result)
   }, [inHours, inMinutes, inPeriod, inDate, outHours, outMinutes, outPeriod, outDate, shift, allPunches, shiftStart, shiftEnd])
@@ -168,7 +168,7 @@ export default function PunchAddModal({
     console.log("[v0] handleAdd called with:")
     console.log("[v0] inDate:", inDate, "outDate:", outDate)
     console.log("[v0] inTime: 09:00 AM, outTime: 05:00 PM")
-    
+
     // Validate mandatory fields
     const mandatoryErrors = validateMandatoryFields()
     if (mandatoryErrors.length > 0) {
@@ -184,7 +184,7 @@ export default function PunchAddModal({
 
     const inTime = convert12to24(inHours, inMinutes, inPeriod)
     const outTime = convert12to24(outHours, outMinutes, outPeriod)
-    
+
     const inPunch = {
       type: 'IN' as const,
       time: inTime,
@@ -224,7 +224,7 @@ export default function PunchAddModal({
         onAdd(inPunch)
         onAdd(outPunch)
       }
-      
+
       // Reset form
       resetForm()
     }
@@ -236,7 +236,7 @@ export default function PunchAddModal({
 
     try {
       console.log("[v0] Calling add-pair API for employee:", employeeId)
-      
+
       const requestBody = {
         attendanceDate: workDate,
         inDate: inPunch.date,
@@ -274,11 +274,11 @@ export default function PunchAddModal({
       // Success response - no validation messages
       if (response.ok) {
         console.log("[v0] Punch pair added successfully")
-        
+
         // Close modal and refresh list
         resetForm()
         onOpenChange(false)
-        
+
         // Refresh the punch list
         if (onRefresh) {
           await onRefresh()
@@ -479,8 +479,8 @@ export default function PunchAddModal({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleAdd} 
+          <Button
+            onClick={handleAdd}
             className="bg-primary"
             disabled={!validationResult.isValid || isLoading}
           >

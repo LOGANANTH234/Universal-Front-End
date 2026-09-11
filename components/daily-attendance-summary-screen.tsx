@@ -29,22 +29,22 @@ export default function DailyAttendanceSummaryScreen() {
 
   const todayStr = format(new Date(), 'yyyy-MM-dd')
 
-  const [summaryData, setSummaryData]                 = useState<AttendanceSummaryRecord[]>([])
+  const [summaryData, setSummaryData] = useState<AttendanceSummaryRecord[]>([])
   const [uniqueEmployeeNames, setUniqueEmployeeNames] = useState<string[]>([])
 
   // Filters
   const [employeeFilter, setEmployeeFilter] = useState('all')
-  const [startDate, setStartDate]           = useState(todayStr)
-  const [endDate, setEndDate]               = useState(todayStr)
+  const [startDate, setStartDate] = useState(todayStr)
+  const [endDate, setEndDate] = useState(todayStr)
 
   const [isStartCalendarOpen, setIsStartCalendarOpen] = useState(false)
-  const [isEndCalendarOpen, setIsEndCalendarOpen]     = useState(false)
+  const [isEndCalendarOpen, setIsEndCalendarOpen] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError]         = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const startDateObj = parseISO(startDate)
-  const endDateObj   = parseISO(endDate)
+  const endDateObj = parseISO(endDate)
 
   // ── fetch ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -112,14 +112,14 @@ export default function DailyAttendanceSummaryScreen() {
     <div className="w-full space-y-6 p-6">
 
       {/* ── Filters ──────────────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-4 shadow-sm">
         <div className="flex flex-wrap gap-4 items-end">
 
           {/* Employee */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">Employee</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Employee</Label>
             <Select value={employeeFilter} onValueChange={setEmployeeFilter}>
-              <SelectTrigger className="h-9 w-44 text-sm bg-white border-slate-300">
+              <SelectTrigger className="h-9 w-44 text-sm bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                 <SelectValue placeholder="All Employees" />
               </SelectTrigger>
               <SelectContent>
@@ -133,12 +133,12 @@ export default function DailyAttendanceSummaryScreen() {
 
           {/* Start Date */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">From Date</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">From Date</Label>
             <Popover open={isStartCalendarOpen} onOpenChange={setIsStartCalendarOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-900 text-sm">
-                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 flex-shrink-0" />
-                  <span className="text-slate-900 font-medium text-sm">{format(startDateObj, 'MMM dd, yyyy')}</span>
+                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 text-slate-900 dark:text-slate-100 text-sm">
+                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 dark:text-slate-400 flex-shrink-0" />
+                  <span className="text-slate-900 dark:text-slate-100 font-medium text-sm">{format(startDateObj, 'MMM dd, yyyy')}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -153,12 +153,12 @@ export default function DailyAttendanceSummaryScreen() {
 
           {/* End Date */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">To Date</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">To Date</Label>
             <Popover open={isEndCalendarOpen} onOpenChange={setIsEndCalendarOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-900 text-sm">
-                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 flex-shrink-0" />
-                  <span className="text-slate-900 font-medium text-sm">{format(endDateObj, 'MMM dd, yyyy')}</span>
+                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 text-slate-900 dark:text-slate-100 text-sm">
+                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 dark:text-slate-400 flex-shrink-0" />
+                  <span className="text-slate-900 dark:text-slate-100 font-medium text-sm">{format(endDateObj, 'MMM dd, yyyy')}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -174,9 +174,9 @@ export default function DailyAttendanceSummaryScreen() {
           {/* Total record count */}
           {!isLoading && filteredData.length > 0 && (
             <div className="space-y-1 flex-shrink-0">
-              <Label className="text-slate-700 font-semibold text-sm">Total Records</Label>
-              <div className="h-9 flex items-center px-3 rounded-md border border-slate-300 bg-slate-50">
-                <span className="text-sm font-bold text-slate-800">{filteredData.length.toLocaleString()}</span>
+              <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Total Records</Label>
+              <div className="h-9 flex items-center px-3 rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{filteredData.length.toLocaleString()}</span>
               </div>
             </div>
           )}
@@ -186,20 +186,20 @@ export default function DailyAttendanceSummaryScreen() {
 
       {/* ── Error ───────────────────────────────────────────────────────────── */}
       {error && (
-        <Card className="border-red-200 bg-red-50">
-          <div className="p-4 text-red-800">{error}</div>
+        <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40">
+          <div className="p-4 text-red-800 dark:text-red-300">{error}</div>
         </Card>
       )}
 
       {/* ── Table ───────────────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-sm font-semibold text-slate-900">Attendance Summary</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Attendance Summary</h2>
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50">
+              <TableRow className="bg-gray-50 dark:bg-slate-800/80">
                 <TableHead>Employee Name</TableHead>
                 <TableHead>Attendance Date</TableHead>
                 <TableHead>First In</TableHead>
@@ -218,19 +218,19 @@ export default function DailyAttendanceSummaryScreen() {
               ) : filteredData.length > 0 ? (
                 filteredData.map((record, index) => (
                   <TableRow key={record.id || index} className="h-14">
-                    <TableCell className="font-medium py-4">{record.employeeName}</TableCell>
-                    <TableCell className="py-4">
+                    <TableCell className="font-medium py-4 text-slate-900 dark:text-slate-100">{record.employeeName}</TableCell>
+                    <TableCell className="py-4 text-slate-700 dark:text-slate-300">
                       {record.attendanceDate ? format(parseISO(record.attendanceDate), 'MMM dd, yyyy') : 'N/A'}
                     </TableCell>
-                    <TableCell className="py-4">{formatDateTime(record.firstIn)}</TableCell>
-                    <TableCell className="py-4">{formatDateTime(record.lastOut)}</TableCell>
-                    <TableCell className="text-right py-4 font-mono">{formatDuration(record.workedMinutes)}</TableCell>
-                    <TableCell className="text-right py-4 font-mono">{formatDuration(record.breakMinutes)}</TableCell>
+                    <TableCell className="py-4 text-slate-700 dark:text-slate-300">{formatDateTime(record.firstIn)}</TableCell>
+                    <TableCell className="py-4 text-slate-700 dark:text-slate-300">{formatDateTime(record.lastOut)}</TableCell>
+                    <TableCell className="text-right py-4 font-mono text-slate-900 dark:text-slate-100">{formatDuration(record.workedMinutes)}</TableCell>
+                    <TableCell className="text-right py-4 font-mono text-slate-900 dark:text-slate-100">{formatDuration(record.breakMinutes)}</TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                  <TableCell colSpan={6} className="text-center py-8 text-slate-500 dark:text-slate-400">
                     No attendance records found for the selected criteria
                   </TableCell>
                 </TableRow>

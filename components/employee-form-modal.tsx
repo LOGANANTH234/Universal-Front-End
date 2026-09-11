@@ -191,7 +191,7 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
       // Explicitly cast to WorkdayPolicy
       newConfig.workdayPolicy = value as WorkdayPolicy
     } else {
-      ;(newConfig as any)[field] = value
+      ; (newConfig as any)[field] = value
     }
     setFormData((prev) => ({
       ...prev,
@@ -796,11 +796,10 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
                         onChange={(e) => handleInputChange("name", e.target.value)}
                         disabled={!!employee}
                         readOnly={!!employee}
-                        className={`h-11 border-slate-300 dark:border-slate-600 ${
-                          employee
-                            ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-semibold cursor-not-allowed"
-                            : ""
-                        } ${getErrorMessage("name") ? "border-red-500" : ""}`}
+                        className={`h-11 border-slate-300 dark:border-slate-600 ${employee
+                          ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-semibold cursor-not-allowed"
+                          : ""
+                          } ${getErrorMessage("name") ? "border-red-500" : ""}`}
                       />
                       {employee && (
                         <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
@@ -823,11 +822,10 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
                         onChange={(e) => handleInputChange("employeeId", e.target.value)}
                         disabled={!!employee}
                         readOnly={!!employee}
-                        className={`h-11 border-slate-300 dark:border-slate-600 ${
-                          employee
-                            ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-semibold cursor-not-allowed"
-                            : ""
-                        } ${getErrorMessage("employeeId") ? "border-red-500" : ""}`}
+                        className={`h-11 border-slate-300 dark:border-slate-600 ${employee
+                          ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-semibold cursor-not-allowed"
+                          : ""
+                          } ${getErrorMessage("employeeId") ? "border-red-500" : ""}`}
                       />
                       {employee && (
                         <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
@@ -1060,11 +1058,10 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
                   return (
                     <div
                       key={shift.id}
-                      className={`bg-slate-50 dark:bg-slate-900/30 border p-4 rounded-lg space-y-3 transition-colors ${
-                        isOverlapping
-                          ? "border-red-500 dark:border-red-500 border-l-4 border-l-red-500 bg-red-50/30 dark:bg-red-950/30"
-                          : "border-l-4 border-l-slate-400 dark:border-l-slate-500 border-slate-200 dark:border-slate-700"
-                      }`}
+                      className={`bg-slate-50 dark:bg-slate-900/30 border p-4 rounded-lg space-y-3 transition-colors ${isOverlapping
+                        ? "border-red-500 dark:border-red-500 border-l-4 border-l-red-500 bg-red-50/30 dark:bg-red-950/30"
+                        : "border-l-4 border-l-slate-400 dark:border-l-slate-500 border-slate-200 dark:border-slate-700"
+                        }`}
                     >
                       {isOverlapping && (
                         <p className="text-red-600 dark:text-red-400 text-sm font-medium">
@@ -1122,7 +1119,7 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
                               <SelectValue placeholder={!shift.amountType ? "Select Amount Type" : undefined} />
                             </SelectTrigger>
                             <SelectContent>
-                            
+
                               <SelectItem value="Per Hour">Per Hour</SelectItem>
                               <SelectItem value="Per Month">Per Month</SelectItem>
                             </SelectContent>
@@ -1177,8 +1174,8 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
                     </div>
                   )
                 })}
-                <Button 
-                  onClick={handleAddRegularShift} 
+                <Button
+                  onClick={handleAddRegularShift}
                   className="w-full"
                   disabled={(formData.regularShifts || []).length >= 1}
                   title={(formData.regularShifts || []).length >= 1 ? "Only 1 regular shift is allowed per employee" : ""}
@@ -1248,7 +1245,7 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
                             <SelectValue placeholder={!shift.amountType ? "Select Amount Type" : undefined} />
                           </SelectTrigger>
                           <SelectContent>
-                           
+
                             <SelectItem value="Per Hour">Per Hour</SelectItem>
                             <SelectItem value="Per Month">Per Month</SelectItem>
                           </SelectContent>

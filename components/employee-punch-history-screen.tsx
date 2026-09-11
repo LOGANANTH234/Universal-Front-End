@@ -93,9 +93,8 @@ function SortableHeader({
     <div ref={ref} className="relative inline-block">
       <button
         onClick={() => setOpen(v => !v)}
-        className={`flex items-center gap-1 font-semibold text-xs uppercase tracking-wide select-none rounded px-1 py-0.5 transition-colors ${
-          isActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900'
-        }`}
+        className={`flex items-center gap-1 font-semibold text-xs uppercase tracking-wide select-none rounded px-1 py-0.5 transition-colors ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+          }`}
       >
         {label}
 
@@ -108,41 +107,39 @@ function SortableHeader({
 
         {isActive ? (
           entry!.direction === 'asc' ? (
-            <ArrowUp className="w-3 h-3 text-blue-600" />
+            <ArrowUp className="w-3 h-3 text-blue-600 dark:text-blue-400" />
           ) : (
-            <ArrowDown className="w-3 h-3 text-blue-600" />
+            <ArrowDown className="w-3 h-3 text-blue-600 dark:text-blue-400" />
           )
         ) : (
-          <ChevronDown className="w-3 h-3 text-slate-400" />
+          <ChevronDown className="w-3 h-3 text-slate-400 dark:text-slate-500" />
         )}
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-50 bg-white border border-slate-200 rounded-md shadow-lg py-1 min-w-[148px]">
+        <div className="absolute left-0 top-full mt-1 z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg py-1 min-w-[148px]">
           <button
             onClick={() => { onSort(column, 'asc'); setOpen(false) }}
-            className={`w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 hover:bg-slate-50 transition-colors ${
-              isActive && entry!.direction === 'asc' ? 'text-blue-600 font-medium' : 'text-slate-700'
-            }`}
+            className={`w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${isActive && entry!.direction === 'asc' ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-700 dark:text-slate-200'
+              }`}
           >
             <ArrowUp className="w-3.5 h-3.5" />
             Sort ascending
           </button>
           <button
             onClick={() => { onSort(column, 'desc'); setOpen(false) }}
-            className={`w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 hover:bg-slate-50 transition-colors ${
-              isActive && entry!.direction === 'desc' ? 'text-blue-600 font-medium' : 'text-slate-700'
-            }`}
+            className={`w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${isActive && entry!.direction === 'desc' ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-slate-700 dark:text-slate-200'
+              }`}
           >
             <ArrowDown className="w-3.5 h-3.5" />
             Sort descending
           </button>
           {isActive && (
             <>
-              <div className="border-t border-slate-100 my-1" />
+              <div className="border-t border-slate-100 dark:border-slate-700 my-1" />
               <button
                 onClick={() => { onSort(column, null); setOpen(false) }}
-                className="w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+                className="w-full text-left px-3 py-1.5 text-sm flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
                 Remove sort
@@ -182,10 +179,10 @@ function SortPill({
       onDragStart={() => onDragStart(index)}
       onDragOver={e => { e.preventDefault(); onDragOver(e, index) }}
       onDrop={() => onDrop(index)}
-      className="inline-flex items-center gap-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full cursor-grab active:cursor-grabbing select-none"
+      className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-semibold px-2 py-1 rounded-full cursor-grab active:cursor-grabbing select-none"
     >
       {total > 1 && (
-        <GripVertical className="w-3 h-3 text-blue-400 flex-shrink-0" />
+        <GripVertical className="w-3 h-3 text-blue-400 dark:text-blue-300 flex-shrink-0" />
       )}
 
       {/* Priority badge */}
@@ -200,7 +197,7 @@ function SortPill({
       {/* Toggle direction */}
       <button
         onClick={onToggleDir}
-        className="hover:text-blue-900 transition-colors flex items-center"
+        className="hover:text-blue-900 dark:hover:text-blue-100 transition-colors flex items-center"
         aria-label={`Toggle direction for ${SORT_COLUMN_LABELS[entry.column]}`}
       >
         {entry.direction === 'asc' ? (
@@ -213,7 +210,7 @@ function SortPill({
       {/* Remove */}
       <button
         onClick={onRemove}
-        className="ml-0.5 hover:text-blue-900 transition-colors"
+        className="ml-0.5 hover:text-blue-900 dark:hover:text-blue-100 transition-colors"
         aria-label={`Remove sort by ${SORT_COLUMN_LABELS[entry.column]}`}
       >
         <X className="w-3 h-3" />
@@ -230,21 +227,21 @@ export default function EmployeePunchHistoryScreen() {
 
   const today = new Date().toISOString().split('T')[0]
 
-  const [punchData, setPunchData]                     = useState<PunchData[]>([])
+  const [punchData, setPunchData] = useState<PunchData[]>([])
   const [uniqueEmployeeNames, setUniqueEmployeeNames] = useState<string[]>([])
 
   const [employeeName, setEmployeeName] = useState('all')
-  const [typeFilter, setTypeFilter]     = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
   const [sourceFilter, setSourceFilter] = useState('all')
 
   const [startDate, setStartDate] = useState(today)
-  const [endDate, setEndDate]     = useState(today)
+  const [endDate, setEndDate] = useState(today)
 
   const [isStartCalendarOpen, setIsStartCalendarOpen] = useState(false)
-  const [isEndCalendarOpen, setIsEndCalendarOpen]     = useState(false)
+  const [isEndCalendarOpen, setIsEndCalendarOpen] = useState(false)
 
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError]         = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   // Multi-sort: ordered array, index 0 = primary sort
   const [sorts, setSorts] = useState<SortEntry[]>(DEFAULT_SORTS)
@@ -253,7 +250,7 @@ export default function EmployeePunchHistoryScreen() {
   const dragIdx = useRef<number | null>(null)
 
   const startDateObj = startOfDay(parseISO(startDate))
-  const endDateObj   = startOfDay(parseISO(endDate))
+  const endDateObj = startOfDay(parseISO(endDate))
 
   // ── sort handlers ─────────────────────────────────────────────────────────
 
@@ -297,8 +294,8 @@ export default function EmployeePunchHistoryScreen() {
 
   // Drag-to-reorder pills
   const handleDragStart = useCallback((i: number) => { dragIdx.current = i }, [])
-  const handleDragOver  = useCallback((e: React.DragEvent) => { e.preventDefault() }, [])
-  const handleDrop      = useCallback((targetIdx: number) => {
+  const handleDragOver = useCallback((e: React.DragEvent) => { e.preventDefault() }, [])
+  const handleDrop = useCallback((targetIdx: number) => {
     const from = dragIdx.current
     if (from === null || from === targetIdx) return
     setSorts(prev => {
@@ -325,16 +322,16 @@ export default function EmployeePunchHistoryScreen() {
         if (!res.ok) throw new Error(`API error: ${res.statusText}`)
         const page = await res.json()
         const mapped: PunchData[] = (page.content || []).map((p: any) => ({
-          id:           p.id?.toString() || Date.now().toString(),
-          employeeId:   p.employeeId?.toString() || '',
+          id: p.id?.toString() || Date.now().toString(),
+          employeeId: p.employeeId?.toString() || '',
           employeeName: p.employeeName || 'Unknown',
-          date:         p.attendanceDate || p.date || '',
-          time:         p.punchTime || p.time || '',
-          type:         p.punchType === 'IN' || p.type === 'IN' ? 'IN' : 'OUT',
-          source:       p.source || 'SYSTEM_AUTO',
-          shift:        p.shift || 'Morning',
-          status:       p.status || 'valid',
-          note:         p.note || '',
+          date: p.attendanceDate || p.date || '',
+          time: p.punchTime || p.time || '',
+          type: p.punchType === 'IN' || p.type === 'IN' ? 'IN' : 'OUT',
+          source: p.source || 'SYSTEM_AUTO',
+          shift: p.shift || 'Morning',
+          status: p.status || 'valid',
+          note: p.note || '',
         }))
         setPunchData(mapped)
         setUniqueEmployeeNames(Array.from(new Set(mapped.map(p => p.employeeName))).sort())
@@ -353,16 +350,16 @@ export default function EmployeePunchHistoryScreen() {
   const getValue = (punch: PunchData, col: SortColumn): string => {
     switch (col) {
       case 'employeeName': return punch.employeeName.toLowerCase()
-      case 'date':         return punch.date
-      case 'time':         return punch.time
+      case 'date': return punch.date
+      case 'time': return punch.time
     }
   }
 
   const filteredPunches = useMemo(() => {
     const filtered = punchData.filter(p => {
       if (employeeName !== 'all' && p.employeeName !== employeeName) return false
-      if (typeFilter   !== 'all' && p.type         !== typeFilter)   return false
-      if (sourceFilter !== 'all' && p.source        !== sourceFilter) return false
+      if (typeFilter !== 'all' && p.type !== typeFilter) return false
+      if (sourceFilter !== 'all' && p.source !== sourceFilter) return false
       return true
     })
 
@@ -415,14 +412,14 @@ export default function EmployeePunchHistoryScreen() {
       </div>
 
       {/* ── Filters ────────────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm space-y-3">
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-4 shadow-sm space-y-3">
         <div className="flex flex-wrap gap-4 items-end">
 
           {/* Employee */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">Employee</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Employee</Label>
             <Select value={employeeName} onValueChange={setEmployeeName}>
-              <SelectTrigger className="h-9 w-44 text-sm bg-white border-slate-300">
+              <SelectTrigger className="h-9 w-44 text-sm bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                 <SelectValue placeholder="All Employees" />
               </SelectTrigger>
               <SelectContent>
@@ -436,12 +433,12 @@ export default function EmployeePunchHistoryScreen() {
 
           {/* Start Date */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">Start Date</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Start Date</Label>
             <Popover open={isStartCalendarOpen} onOpenChange={setIsStartCalendarOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-900 text-sm">
-                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 flex-shrink-0" />
-                  <span className="text-slate-900 font-medium text-sm">{format(startDateObj, 'MMM dd, yyyy')}</span>
+                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 text-slate-900 dark:text-slate-100 text-sm">
+                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 dark:text-slate-400 flex-shrink-0" />
+                  <span className="text-slate-900 dark:text-slate-100 font-medium text-sm">{format(startDateObj, 'MMM dd, yyyy')}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -456,12 +453,12 @@ export default function EmployeePunchHistoryScreen() {
 
           {/* End Date */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">End Date</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">End Date</Label>
             <Popover open={isEndCalendarOpen} onOpenChange={setIsEndCalendarOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white border-slate-300 hover:bg-slate-50 hover:border-slate-400 text-slate-900 text-sm">
-                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 flex-shrink-0" />
-                  <span className="text-slate-900 font-medium text-sm">{format(endDateObj, 'MMM dd, yyyy')}</span>
+                <Button variant="outline" className="h-9 px-2 py-1 justify-start text-left font-normal bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 text-slate-900 dark:text-slate-100 text-sm">
+                  <CalendarIcon className="mr-1 h-3 w-3 text-slate-600 dark:text-slate-400 flex-shrink-0" />
+                  <span className="text-slate-900 dark:text-slate-100 font-medium text-sm">{format(endDateObj, 'MMM dd, yyyy')}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -476,9 +473,9 @@ export default function EmployeePunchHistoryScreen() {
 
           {/* Type */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">Type</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Type</Label>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="h-9 w-32 text-sm bg-white border-slate-300">
+              <SelectTrigger className="h-9 w-32 text-sm bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
@@ -491,9 +488,9 @@ export default function EmployeePunchHistoryScreen() {
 
           {/* Source */}
           <div className="space-y-1 flex-shrink-0">
-            <Label className="text-slate-700 font-semibold text-sm">Source</Label>
+            <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Source</Label>
             <Select value={sourceFilter} onValueChange={setSourceFilter}>
-              <SelectTrigger className="h-9 w-44 text-sm bg-white border-slate-300">
+              <SelectTrigger className="h-9 w-44 text-sm bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                 <SelectValue placeholder="All Sources" />
               </SelectTrigger>
               <SelectContent>
@@ -508,9 +505,9 @@ export default function EmployeePunchHistoryScreen() {
           {/* Total Records */}
           {!isLoading && filteredPunches.length > 0 && (
             <div className="space-y-1 flex-shrink-0">
-              <Label className="text-slate-700 font-semibold text-sm">Total Records</Label>
-              <div className="h-9 flex items-center px-3 rounded-md border border-slate-300 bg-slate-50">
-                <span className="text-sm font-bold text-slate-800">{filteredPunches.length.toLocaleString()}</span>
+              <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Total Records</Label>
+              <div className="h-9 flex items-center px-3 rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{filteredPunches.length.toLocaleString()}</span>
               </div>
             </div>
           )}
@@ -518,8 +515,8 @@ export default function EmployeePunchHistoryScreen() {
 
         {/* ── Sort pills ──────────────────────────────────────────────────── */}
         {!isDefaultSort && (
-          <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100">
-            <span className="text-xs text-slate-500 font-medium">Sorted by:</span>
+          <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Sorted by:</span>
             {sorts.map((entry, i) => (
               <SortPill
                 key={entry.column}
@@ -535,7 +532,7 @@ export default function EmployeePunchHistoryScreen() {
             ))}
             <button
               onClick={handleClearAllSorts}
-              className="text-xs text-slate-400 hover:text-slate-600 transition-colors underline underline-offset-2 ml-1"
+              className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors underline underline-offset-2 ml-1"
             >
               Clear all
             </button>
@@ -545,33 +542,33 @@ export default function EmployeePunchHistoryScreen() {
 
       {/* ── Error ──────────────────────────────────────────────────────────── */}
       {error && (
-        <Card className="border-red-200 bg-red-50">
-          <div className="p-4 text-red-800">{error}</div>
+        <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40">
+          <div className="p-4 text-red-800 dark:text-red-300">{error}</div>
         </Card>
       )}
 
       {/* ── Table ──────────────────────────────────────────────────────────── */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-sm font-semibold text-slate-900">Punch Records</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Punch Records</h2>
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50">
+              <TableRow className="bg-gray-50 dark:bg-slate-800/80">
                 <TableHead>
                   <SortableHeader column="employeeName" label="Employee" sorts={sorts} onSort={handleSort} />
                 </TableHead>
                 <TableHead>
                   <SortableHeader column="date" label="Date" sorts={sorts} onSort={handleSort} />
                 </TableHead>
-                <TableHead className="font-semibold text-xs uppercase tracking-wide text-slate-600">
+                <TableHead className="font-semibold text-xs uppercase tracking-wide text-slate-600 dark:text-slate-300">
                   Type
                 </TableHead>
                 <TableHead>
                   <SortableHeader column="time" label="Time" sorts={sorts} onSort={handleSort} />
                 </TableHead>
-                <TableHead className="font-semibold text-xs uppercase tracking-wide text-slate-600">
+                <TableHead className="font-semibold text-xs uppercase tracking-wide text-slate-600 dark:text-slate-300">
                   Source
                 </TableHead>
               </TableRow>
@@ -593,16 +590,16 @@ export default function EmployeePunchHistoryScreen() {
                   return (
                     <>
                       {/* ── Date separator row ── */}
-                      <TableRow key={`date-header-${date}`} className={`${!isFirstGroup ? 'border-t-2 border-slate-300' : ''}`}>
+                      <TableRow key={`date-header-${date}`} className={`${!isFirstGroup ? 'border-t-2 border-slate-300 dark:border-slate-700' : ''}`}>
                         <TableCell
                           colSpan={5}
-                          className="py-2 px-4 bg-slate-50"
+                          className="py-2 px-4 bg-slate-50 dark:bg-slate-800/50"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                               {dateLabel}
                             </span>
-                            <span className="text-xs text-slate-400 font-medium">
+                            <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">
                               {dayPunches.length} {dayPunches.length === 1 ? 'record' : 'records'}
                             </span>
                           </div>
@@ -611,21 +608,22 @@ export default function EmployeePunchHistoryScreen() {
 
                       {/* ── Data rows for this date ── */}
                       {dayPunches.map(punch => (
-                        <TableRow key={punch.id} className="h-12 border-t border-slate-100">
-                          <TableCell className="font-medium py-3">{punch.employeeName}</TableCell>
-                          <TableCell className="text-sm py-3 text-slate-500">
+                        <TableRow key={punch.id} className="h-12 border-t border-slate-100 dark:border-slate-800">
+                          <TableCell className="font-medium py-3 text-slate-900 dark:text-slate-100">{punch.employeeName}</TableCell>
+                          <TableCell className="text-sm py-3 text-slate-500 dark:text-slate-400">
                             {punch.date ? format(parseISO(punch.date), 'MMM dd, yyyy') : 'N/A'}
                           </TableCell>
                           <TableCell className="py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                              punch.type === 'IN' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                            }`}>
+                            <span className={`px-2 py-1 rounded text-xs font-semibold ${punch.type === 'IN'
+                              ? 'bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-400 dark:border dark:border-green-800'
+                              : 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 dark:border dark:border-red-800'
+                              }`}>
                               {punch.type}
                             </span>
                           </TableCell>
-                          <TableCell className="font-mono py-3">{punch.time || 'N/A'}</TableCell>
+                          <TableCell className="font-mono py-3 text-slate-900 dark:text-slate-100">{punch.time || 'N/A'}</TableCell>
                           <TableCell className="py-3">
-                            <span className="text-xs font-medium bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
+                            <span className="text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded">
                               {punch.source}
                             </span>
                           </TableCell>
@@ -636,7 +634,7 @@ export default function EmployeePunchHistoryScreen() {
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                  <TableCell colSpan={5} className="text-center py-8 text-slate-500 dark:text-slate-400">
                     No punch records found for the selected criteria
                   </TableCell>
                 </TableRow>

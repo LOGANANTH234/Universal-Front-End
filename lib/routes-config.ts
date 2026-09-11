@@ -44,7 +44,7 @@ export const ROUTE_CONFIG = {
     requiredModule: undefined,
   },
   "/settings": {
-    requiredModule: undefined,
+    requiredModule: MODULES.SETTINGS,
   },
   "/holiday-management": {
     requiredModule: MODULES.HOLIDAY_MANAGEMENT,
@@ -59,8 +59,11 @@ export const ROUTE_CONFIG = {
     requiredModule: MODULES.SALARY,
   },
   "/advance-management": {
-  requiredModule: MODULES.Advance_Management,
-},
+    requiredModule: MODULES.Advance_Management,
+  },
+  "/leave-management": {
+    requiredModule: MODULES.LEAVE_MANAGEMENT,
+  },
 } as const
 
 // Helper function to get required module for a route

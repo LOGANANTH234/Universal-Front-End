@@ -179,9 +179,9 @@ export default function LiveAttendanceScreen() {
   const employeeWidth = "w-[210px]"
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-background">
+    <div className="overflow-hidden flex flex-col bg-background dark:bg-slate-950" style={{ height: "calc(100vh - 56px)" }}>
       {/* Top Date Header */}
-      <div className="sticky top-0 z-10 bg-white dark:bg-slate-950 border-b border-border shadow-sm">
+      <div className="sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 shadow-sm">
         <div className="flex items-center justify-center gap-4 px-6 py-4">
           <div className="flex items-center gap-2 h-auto py-2 px-3">
             <CalendarIcon className="w-4 h-4 text-muted-foreground" />
@@ -192,7 +192,7 @@ export default function LiveAttendanceScreen() {
             variant="outline"
             onClick={() => refetch()}
             disabled={isLoading}
-            className="gap-2 flex items-center"
+            className="gap-2 flex items-center dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
             <span className="text-xs font-medium">Refresh</span>
@@ -202,7 +202,7 @@ export default function LiveAttendanceScreen() {
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-6 py-6 max-w-7xl mx-auto">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-5">
 
           {/* Stats */}
           {canViewSummary && (
@@ -287,15 +287,15 @@ export default function LiveAttendanceScreen() {
                   </button>
                 )}
                 {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute z-50 top-full mt-1 w-full bg-white dark:bg-slate-900 border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                  <div className="absolute z-50 top-full mt-1 w-full bg-white dark:bg-slate-900 border border-border dark:border-slate-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
                     {suggestions.map((name) => (
                       <button
                         key={name}
                         onMouseDown={() => handleEmployeeSelect(name)}
-                        className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors"
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-900 dark:text-slate-100"
                       >
                         <span className="font-semibold">{name.slice(0, employeeSearch.length)}</span>
-                        <span className="text-muted-foreground">{name.slice(employeeSearch.length)}</span>
+                        <span className="text-muted-foreground dark:text-slate-400">{name.slice(employeeSearch.length)}</span>
                       </button>
                     ))}
                   </div>

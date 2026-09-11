@@ -106,7 +106,7 @@ export default function ShiftCard({
             <Clock className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-700" />
             <div>
               <p className="text-sm text-foreground font-semibold">Shift timing</p>
-              <p className="font-medium border border-solid px-3 py-1 text-xs rounded-full text-green-900 bg-green-200 border-green-400">
+              <p className="font-medium border border-solid px-3 py-1 text-xs rounded-full text-green-900 dark:text-green-200 bg-green-200 dark:bg-green-900/40 border-green-400 dark:border-green-700">
                 {to12HourFormat(shift.startTime)} - {to12HourFormat(shift.endTime)}
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function ShiftCard({
           {/* Breaks */}
           {shift.breaks.length > 0 && (
             <div className="flex items-start gap-3">
-              <Coffee className="w-4 h-4 mt-0.5 flex-shrink-0 text-orange-900" />
+              <Coffee className="w-4 h-4 mt-0.5 flex-shrink-0 text-orange-700 dark:text-orange-400" />
               <div className="flex-1">
                 <p className="text-sm mb-2 text-foreground font-semibold">Breaks</p>
                 <div className="flex flex-wrap gap-2">
@@ -135,7 +135,7 @@ export default function ShiftCard({
           {/* Lunch */}
           {shift.lunch.length > 0 && (
             <div className="flex items-start gap-3">
-              <UtensilsCrossed className="w-4 h-4 mt-0.5 flex-shrink-0 text-pink-900" />
+              <UtensilsCrossed className="w-4 h-4 mt-0.5 flex-shrink-0 text-pink-700 dark:text-pink-400" />
               <div className="flex-1">
                 <p className="text-sm mb-2 text-foreground font-semibold">Lunch</p>
                 <div className="flex flex-wrap gap-2">
@@ -155,7 +155,7 @@ export default function ShiftCard({
           <div className="pt-3 border-t border-inherit grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-foreground font-semibold">Total Hours</p>
-              <p className="text-sm font-semibold text-green-700">
+              <p className="text-sm font-semibold text-green-700 dark:text-green-400">
                 {shift.totalHours >= 0
                   ? `${Math.floor(shift.totalHours)} hr ${Math.round((shift.totalHours % 1) * 60)} min`
                   : `-${Math.floor(Math.abs(shift.totalHours))} hr ${Math.round((Math.abs(shift.totalHours) % 1) * 60)} min`}
@@ -163,7 +163,7 @@ export default function ShiftCard({
             </div>
             <div>
               <p className="text-xs text-right text-foreground font-semibold">Grace time for late</p>
-              <p className="text-sm font-semibold text-right text-red-600">{formatGracePeriod(shift.gracePeriod)}</p>
+              <p className="text-sm font-semibold text-right text-red-600 dark:text-red-400">{formatGracePeriod(shift.gracePeriod)}</p>
             </div>
           </div>
         </div>

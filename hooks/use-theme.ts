@@ -45,5 +45,17 @@ export function useTheme() {
     setDark(next)
   }, [])
 
-  return { dark, toggleTheme }
+  const setTheme = useCallback((theme: "dark" | "light") => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark")
+      localStorage.setItem("theme", "dark")
+      setDark(true)
+    } else {
+      document.documentElement.classList.remove("dark")
+      localStorage.setItem("theme", "light")
+      setDark(false)
+    }
+  }, [])
+
+  return { dark, toggleTheme, setTheme }
 }

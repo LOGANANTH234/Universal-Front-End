@@ -634,7 +634,7 @@ export default function ViewEditPunchesScreen() {
       {/* Filters */}
       <Card className="p-6 space-y-4">
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm">
+          <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 rounded text-sm">
             {error}
           </div>
         )}
@@ -716,7 +716,7 @@ export default function ViewEditPunchesScreen() {
         <Card className="overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50">
+              <TableRow className="bg-gray-50 dark:bg-slate-800/80">
                 <TableHead>Employee</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Type</TableHead>
@@ -728,20 +728,19 @@ export default function ViewEditPunchesScreen() {
             <TableBody>
               {filteredPunches.map(punch => (
                 <TableRow key={punch.id}>
-                  <TableCell className="font-medium">{punch.employeeName}</TableCell>
+                  <TableCell className="font-medium text-slate-900 dark:text-slate-100">{punch.employeeName}</TableCell>
                   <TableCell className="text-sm">
                     {punch.date ? format(parseISO(punch.date), 'MMM dd, yyyy') : 'N/A'}
                   </TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                      punch.type === 'IN'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}>
+                    <span className={`px-2 py-1 rounded text-xs font-semibold ${punch.type === 'IN'
+                      ? 'bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-400 dark:border dark:border-green-800'
+                      : 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 dark:border dark:border-red-800'
+                      }`}>
                       {punch.type}
                     </span>
                   </TableCell>
-                  <TableCell className="font-mono">{punch.time || 'N/A'}</TableCell>
+                  <TableCell className="font-mono text-slate-900 dark:text-slate-100">{punch.time || 'N/A'}</TableCell>
                   <TableCell className="text-sm">{punch.source}</TableCell>
                   {canEditPunches && (
                     <TableCell>
@@ -753,7 +752,7 @@ export default function ViewEditPunchesScreen() {
                             setSelectedPunch(punch)
                             setIsEditModalOpen(true)
                           }}
-                          className="gap-1"
+                          className="gap-1 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-200"
                         >
                           <Edit2 className="w-3 h-3" />
                           Edit
@@ -761,7 +760,7 @@ export default function ViewEditPunchesScreen() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="gap-1 text-red-600 hover:text-red-700 bg-transparent"
+                          className="gap-1 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 bg-transparent dark:border-slate-700 dark:hover:bg-slate-800"
                           onClick={() => {
                             setSelectedPunch(punch)
                             setIsDeleteModalOpen(true)
@@ -791,7 +790,7 @@ export default function ViewEditPunchesScreen() {
         employeeId={
           filters.employeeName
             ? employeeList.find(e => e.name === filters.employeeName)?.employeeId ||
-              apiPunchData.find(p => p.employeeName === filters.employeeName)?.employeeId
+            apiPunchData.find(p => p.employeeName === filters.employeeName)?.employeeId
             : undefined
         }
         authToken={auth?.token}

@@ -394,7 +394,7 @@ export default function ShiftFormModal({
       <div className="bg-card rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-border bg-primary/5 dark:bg-primary/10">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-sky-300">
+            <div className="p-2 rounded-lg bg-sky-300 dark:bg-sky-700">
               <Clock className="w-5 h-5 text-primary-foreground" />
             </div>
             <h2 className="text-lg font-semibold text-foreground">
@@ -506,7 +506,7 @@ export default function ShiftFormModal({
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="block text-sm font-medium text-foreground flex items-center gap-2">
-                <span className="p-1.5 rounded-md text-orange-900 bg-orange-100">
+                <span className="p-1.5 rounded-md text-orange-700 dark:text-orange-300 bg-orange-100 dark:bg-orange-900/40">
                   <Coffee className="w-4 h-4" />
                 </span>
                 Break Times
@@ -516,7 +516,7 @@ export default function ShiftFormModal({
                 variant="outline"
                 size="sm"
                 onClick={addBreak}
-                className="gap-1 hover:bg-primary/20 text-orange-900 bg-orange-100 border-orange-400"
+                className="gap-1 hover:bg-primary/20 text-orange-800 dark:text-orange-300 bg-orange-100 dark:bg-orange-900/40 border-orange-400 dark:border-orange-700"
                 disabled={viewMode}
               >
                 <Plus className="w-4 h-4" />
@@ -586,7 +586,7 @@ export default function ShiftFormModal({
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="block text-sm font-medium text-foreground flex items-center gap-2">
-                <span className="p-1.5 rounded-md text-pink-900 bg-pink-100">
+                <span className="p-1.5 rounded-md text-pink-700 dark:text-pink-300 bg-pink-100 dark:bg-pink-900/40">
                   <UtensilsCrossed className="w-4 h-4" />
                 </span>
                 Lunch Times
@@ -596,7 +596,7 @@ export default function ShiftFormModal({
                 variant="outline"
                 size="sm"
                 onClick={addLunch}
-                className="gap-1 hover:bg-primary/20 text-pink-900 bg-pink-100 border-pink-400"
+                className="gap-1 hover:bg-primary/20 text-pink-800 dark:text-pink-300 bg-pink-100 dark:bg-pink-900/40 border-pink-400 dark:border-pink-700"
                 disabled={viewMode}
               >
                 <Plus className="w-4 h-4" />
@@ -666,7 +666,7 @@ export default function ShiftFormModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                <span className="p-1.5 rounded-md bg-purple-100 text-purple-900">
+                <span className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
                   <Clock className="w-4 h-4" />
                 </span>
                 Total Hours
@@ -679,7 +679,7 @@ export default function ShiftFormModal({
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                <span className="p-1.5 rounded-md bg-red-100 text-red-900">
+                <span className="p-1.5 rounded-md bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300">
                   <Clock className="w-4 h-4" />
                 </span>
                 Grace time for late

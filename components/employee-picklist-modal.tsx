@@ -126,9 +126,9 @@ export default function EmployeePicklistModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800">
         <DialogHeader className="pb-4">
-          <DialogTitle className="text-xl">Manage Employees</DialogTitle>
+          <DialogTitle className="text-xl text-slate-900 dark:text-slate-100">Manage Employees</DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col gap-6 flex-1 min-h-0">
@@ -139,33 +139,33 @@ export default function EmployeePicklistModal({
               placeholder="Search by employee name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-10"
+              className="pl-10 h-10 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               disabled={isLoading}
             />
           </div>
 
           {isLoading ? (
-            <div className="flex-1 border rounded-lg flex items-center justify-center min-h-[400px] bg-white dark:bg-slate-900">
+            <div className="flex-1 border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-center min-h-[400px] bg-white dark:bg-slate-900">
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
                 <p className="text-slate-600 dark:text-slate-400">Loading employees...</p>
               </div>
             </div>
           ) : error ? (
-            <div className="flex-1 border rounded-lg flex items-center justify-center min-h-[400px] bg-white dark:bg-slate-900">
+            <div className="flex-1 border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-center min-h-[400px] bg-white dark:bg-slate-900">
               <div className="flex flex-col items-center gap-3 max-w-md text-center">
                 <p className="text-red-600 dark:text-red-400 font-medium">Error loading employees</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">{error}</p>
-                <Button onClick={fetchEmployees} variant="outline" className="mt-2 bg-transparent">
+                <Button onClick={fetchEmployees} variant="outline" className="mt-2 bg-transparent dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-800">
                   Try Again
                 </Button>
               </div>
             </div>
           ) : (
-            <div className="flex-1 border rounded-lg overflow-hidden flex flex-col min-h-0 bg-white dark:bg-slate-900">
+            <div className="flex-1 border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden flex flex-col min-h-0 bg-white dark:bg-slate-900">
               <div className="overflow-auto flex-1">
                 <table className="w-full">
-                  <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b-2 border-slate-200 dark:border-slate-700">
+                  <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b-2 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                     <tr>
                       <th className="text-left p-4 font-semibold text-sm w-32">
                         <div className="flex items-center gap-3">
@@ -230,7 +230,7 @@ export default function EmployeePicklistModal({
         </div>
 
         <DialogFooter className="pt-4 gap-3">
-          <Button variant="outline" onClick={handleCancel} className="px-6 bg-transparent">
+          <Button variant="outline" onClick={handleCancel} className="px-6 bg-transparent dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-800">
             Cancel
           </Button>
           <Button

@@ -61,7 +61,36 @@ export default function DualTreePermissionEditor({
         setModulesLoading(true)
         setModulesError(null)
         const response = await fetchModulesTree()
-        const convertedModules = convertModulesToPermissionNodes(response)
+        const convertedModules = convertModulesToPermissionNodes(response || [])
+
+        // Guarantee HOLIDAY_MANAGEMENT is available in the permission tree
+        if (!convertedModules.some((m) => m.id === "HOLIDAY_MANAGEMENT")) {
+          convertedModules.push({
+            id: "HOLIDAY_MANAGEMENT",
+            name: "Holiday Management",
+            type: "module",
+            children: [
+              { id: "HOLIDAY_VIEW", name: "View Holidays", type: "action" },
+              { id: "HOLIDAY_EDIT", name: "Edit Holiday", type: "action" },
+              { id: "HOLIDAY_CREATE", name: "Create Holiday", type: "action" },
+              { id: "HOLIDAY_DELETE", name: "Delete Holiday", type: "action" },
+            ],
+          })
+        }
+
+        // Guarantee SETTINGS is available in the permission tree
+        if (!convertedModules.some((m) => m.id === "SETTINGS")) {
+          convertedModules.push({
+            id: "SETTINGS",
+            name: "Settings",
+            type: "module",
+            children: [
+              { id: "SETTINGS_VIEW", name: "View Settings", type: "action" },
+              { id: "SETTINGS_EDIT", name: "Edit Settings", type: "action" },
+            ],
+          })
+        }
+
         setAvailableModules(convertedModules)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Failed to load modules"
@@ -75,6 +104,7 @@ export default function DualTreePermissionEditor({
 
     loadModules()
   }, [])
+
 
   useEffect(() => {
     const loadRoleConfig = async () => {
@@ -363,13 +393,13 @@ export default function DualTreePermissionEditor({
   const canRemove = rightSelected !== null
 
   return (
-    <div className="flex flex-col gap-4 h-[calc(100vh-80px)] bg-blue-50 dark:bg-slate-800/30 p-3 rounded-lg py-12 pt-3 pb-14">
+    <div className="flex flex-col gap-4 h-[calc(100vh-80px)] bg-blue-50 dark:bg-slate-900/40 p-3 rounded-lg py-12 pt-3 pb-14">
       {(canManageEmployee || canSavePermissions) && (
         <div className="flex justify-end gap-2 px-3">
           {canManageEmployee && (
             <Button
               onClick={() => setIsEmployeeModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 shadow-sm"
             >
               <Users className="mr-2 h-4 w-4" />
               Manage Employee
@@ -379,7 +409,7 @@ export default function DualTreePermissionEditor({
             <Button
               onClick={handleSave}
               disabled={isSaving || permissionsLoading}
-              className="bg-green-600 hover:bg-green-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold px-6"
+              className="bg-green-600 hover:bg-green-700 disabled:bg-slate-300 dark:disabled:bg-slate-800 text-white font-semibold px-6 shadow-sm"
             >
               {isSaving ? (
                 <>
@@ -395,7 +425,7 @@ export default function DualTreePermissionEditor({
       )}
 
       <div className="flex gap-4 h-full">
-        <div className="flex-1 border border-blue-200 dark:border-blue-900/40 rounded-lg overflow-hidden flex flex-col bg-white dark:bg-slate-900">
+        <div className="flex-1 border border-blue-200 dark:border-slate-800 rounded-lg overflow-hidden flex flex-col bg-white dark:bg-slate-900 shadow-sm">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 font-semibold flex items-center justify-between">
             <span>Available Modules & Actions</span>
             <div className="flex gap-2">
@@ -418,7 +448,7 @@ export default function DualTreePermissionEditor({
             </div>
           </div>
 
-          <div className="px-3 py-2 border-b border-blue-100 dark:border-blue-900/30">
+          <div className="px-3 py-2 border-b border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
               <Input
@@ -426,13 +456,13 @@ export default function DualTreePermissionEditor({
                 placeholder="Search modules or actions"
                 value={leftSearchQuery}
                 onChange={(e) => setLeftSearchQuery(e.target.value)}
-                className="pl-9 pr-8 h-8 text-sm bg-white dark:bg-slate-800"
+                className="pl-9 pr-8 h-8 text-sm bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 disabled={modulesLoading}
               />
               {leftSearchQuery && (
                 <button
                   onClick={() => setLeftSearchQuery("")}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                 >
                   <X size={16} />
                 </button>
@@ -447,13 +477,13 @@ export default function DualTreePermissionEditor({
                 <span className="text-muted-foreground">Loading modules...</span>
               </div>
             ) : modulesError ? (
-              <div className="text-center text-red-600 text-sm py-8 px-4">
+              <div className="text-center text-red-600 dark:text-red-400 text-sm py-8 px-4">
                 <p className="font-semibold">Error loading modules</p>
                 <p className="text-xs mt-2">{modulesError}</p>
               </div>
             ) : filteredLeftModules.length > 0 ? (
               <>
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-blue-100 dark:from-blue-900/30 to-transparent pointer-events-none z-10" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-blue-100/50 dark:from-slate-800/40 to-transparent pointer-events-none z-10" />
                 {filteredLeftModules.map((module) => (
                   <PermissionTreeNode
                     key={module.id}
@@ -467,7 +497,7 @@ export default function DualTreePermissionEditor({
                     moduleSelectStates={selectedModules}
                   />
                 ))}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-blue-100 dark:from-blue-900/30 to-transparent pointer-events-none z-10" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-blue-100/50 dark:from-slate-800/40 to-transparent pointer-events-none z-10" />
               </>
             ) : (
               <div className="text-center text-muted-foreground text-sm py-8">No results found</div>
@@ -480,21 +510,21 @@ export default function DualTreePermissionEditor({
             <Button
               onClick={handleInclude}
               disabled={!canInclude || modulesLoading}
-              className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold rounded-lg transition-all"
+              className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 text-white font-semibold rounded-lg transition-all shadow-sm"
             >
               <span>Include</span>
             </Button>
             <Button
               onClick={handleRemove}
               disabled={!canRemove}
-              className="flex items-center gap-2 px-6 py-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold rounded-lg transition-all"
+              className="flex items-center gap-2 px-6 py-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:border disabled:border-slate-300 dark:disabled:border-slate-700 text-white font-semibold rounded-lg transition-all shadow-sm"
             >
               <span>Remove</span>
             </Button>
           </div>
         )}
 
-        <div className="flex-1 border border-blue-200 dark:border-blue-900/40 rounded-lg overflow-hidden flex flex-col bg-white dark:bg-slate-900">
+        <div className="flex-1 border border-blue-200 dark:border-slate-800 rounded-lg overflow-hidden flex flex-col bg-white dark:bg-slate-900 shadow-sm">
           <div className="bg-gradient-to-r from-blue-700 to-blue-800 text-white px-4 py-3 font-semibold flex items-center justify-between">
             <span>Assigned to {role.name} Role</span>
             <div className="flex gap-2">
@@ -515,7 +545,7 @@ export default function DualTreePermissionEditor({
             </div>
           </div>
 
-          <div className="px-3 py-2 border-b border-blue-100 dark:border-blue-900/30">
+          <div className="px-3 py-2 border-b border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
               <Input
@@ -523,12 +553,12 @@ export default function DualTreePermissionEditor({
                 placeholder="Search modules or actions"
                 value={rightSearchQuery}
                 onChange={(e) => setRightSearchQuery(e.target.value)}
-                className="pl-9 pr-8 h-8 text-sm bg-white dark:bg-slate-800"
+                className="pl-9 pr-8 h-8 text-sm bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
               {rightSearchQuery && (
                 <button
                   onClick={() => setRightSearchQuery("")}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                 >
                   <X size={16} />
                 </button>
@@ -549,7 +579,7 @@ export default function DualTreePermissionEditor({
               </div>
             ) : assignedPermissions.length > 0 ? (
               <>
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-blue-100 dark:from-blue-900/30 to-transparent pointer-events-none z-10" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-b from-blue-100/50 dark:from-slate-800/40 to-transparent pointer-events-none z-10" />
                 {filteredRightModules.map((permission) => (
                   <PermissionTreeNode
                     key={permission.id}
@@ -561,7 +591,7 @@ export default function DualTreePermissionEditor({
                     isHighlighted={true}
                   />
                 ))}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-blue-100 dark:from-blue-900/30 to-transparent pointer-events-none z-10" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-t from-blue-100/50 dark:from-slate-800/40 to-transparent pointer-events-none z-10" />
               </>
             ) : (
               <div className="text-center text-muted-foreground text-sm py-8">No permissions assigned</div>

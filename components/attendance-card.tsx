@@ -17,11 +17,6 @@ export default function AttendanceCard({ attendance, canEditPunch = true }: Atte
   const isClocked = attendance.clockInTime !== "--"
 
   const isInside = attendance.inside === true
-  const bgColor = isInside ? "#E8F8EF" : "#FDECEC"
-  const borderColor = isInside ? "#10b981" : "#ef4444"
-
-  const shiftColor = "#3b82f6"
-  const workedColor = "#ec4899"
 
   const formatWorkedHours = () => {
     const hours = Number(attendance.workedHours) || 0
@@ -47,42 +42,26 @@ export default function AttendanceCard({ attendance, canEditPunch = true }: Atte
     <>
       <div
         onClick={() => setIsModalOpen(true)}
-        className="rounded-lg shadow-sm hover:shadow-md transition-shadow border w-full max-w-[380px] cursor-pointer"
-        style={{
-          backgroundColor: bgColor,
-          borderColor: borderColor,
-          padding: "1rem",
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.75rem",
-        }}
+        className={`rounded-xl shadow-sm hover:shadow-md transition-all border w-full cursor-pointer p-4 flex flex-col gap-3 ${
+          isInside
+            ? "bg-emerald-50/80 border-emerald-400 hover:border-emerald-500 dark:bg-emerald-950/25 dark:border-emerald-700/60 dark:hover:border-emerald-500"
+            : "bg-rose-50/80 border-rose-300 hover:border-rose-400 dark:bg-rose-950/25 dark:border-rose-700/60 dark:hover:border-rose-500"
+        }`}
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-2 min-w-0">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
             <div
-              className="flex-shrink-0"
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #60a5fa, #2563eb)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontWeight: "600",
-                fontSize: "16px",
-              }}
+              className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-base shadow-sm"
             >
               {attendance.employeeName.charAt(0)}
             </div>
 
             <div className="flex-1 min-w-0">
-              <div className="text-xs sm:text-sm font-semibold text-secondary-foreground truncate">
+              <div className="text-xs sm:text-sm font-bold text-gray-900 dark:text-slate-100 truncate">
                 {attendance.employeeName}
               </div>
-              <div className={`text-xs mt-0.5 truncate font-medium ${isClocked ? "text-green-600" : "text-red-600"}`}>
+              <div className={`text-xs mt-0.5 truncate font-semibold ${isClocked ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"}`}>
                 {attendance.employeeRole}
               </div>
             </div>
@@ -95,37 +74,34 @@ export default function AttendanceCard({ attendance, canEditPunch = true }: Atte
 
         {/* Divider */}
         <div
-          className="opacity-20"
-          style={{
-            borderTop: `1px solid ${borderColor}`,
-            marginLeft: "-1rem",
-            marginRight: "-1rem",
-            marginTop: "0.1rem",
-            marginBottom: "0.5rem",
-          }}
-        ></div>
+          className={`border-t -mx-4 my-0.5 ${
+            isInside
+              ? "border-emerald-200 dark:border-emerald-800/40"
+              : "border-rose-200 dark:border-rose-800/40"
+          }`}
+        />
 
         {/* Details */}
         <div className="grid grid-cols-2 gap-6 sm:gap-7">
           <div className="flex flex-col gap-4">
             {/* Shift */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Clock size={14} style={{ color: shiftColor }} />
-                <div className="text-xs sm:text-sm font-medium text-muted-foreground">Shift Timing</div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <Clock size={14} className="text-blue-500 dark:text-blue-400" />
+                <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">Shift Timing</div>
               </div>
-              <div className="text-xs font-medium">
+              <div className="text-xs font-semibold text-gray-800 dark:text-slate-200">
                 {attendance.shiftStartTime} – {attendance.shiftEndTime}
               </div>
             </div>
 
             {/* Worked */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Briefcase size={14} style={{ color: workedColor }} />
-                <div className="text-xs sm:text-sm font-medium text-muted-foreground">Worked Hours</div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <Briefcase size={14} className="text-pink-500 dark:text-pink-400" />
+                <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">Worked Hours</div>
               </div>
-              <div className={`text-xs tracking-normal font-bold ${isClocked ? "text-green-700" : "text-red-700"}`}>
+              <div className={`text-xs tracking-normal font-bold ${isClocked ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"}`}>
                 {formatWorkedHours()}
               </div>
             </div>
@@ -149,35 +125,33 @@ export default function AttendanceCard({ attendance, canEditPunch = true }: Atte
                 const showOut = hasLatestOut
                 const showIn = hasLatestIn
 
-                console.log(`[v0] ${attendance.employeeName}: latestPunchTime="${attendance.latestPunchTime}", clockInTime="${attendance.clockInTime}", showOut=${showOut}, showIn=${showIn}`)
-
                 return (
                   <>
-                    <div className="flex items-center gap-2 mb-2 justify-end">
+                    <div className="flex items-center gap-2 mb-1.5 justify-end">
                       {showOut ? (
-                        <LogOut size={14} style={{ color: "#ef4444" }} />
+                        <LogOut size={14} className="text-rose-500 dark:text-rose-400" />
                       ) : showIn ? (
-                        <LogIn size={14} style={{ color: "#10b981" }} />
+                        <LogIn size={14} className="text-emerald-500 dark:text-emerald-400" />
                       ) : (
-                        <LogOut size={14} style={{ color: "#9ca3af" }} />
+                        <LogOut size={14} className="text-gray-400 dark:text-slate-500" />
                       )}
-                      <div className="text-xs sm:text-sm font-medium text-muted-foreground">
+                      <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">
                         {showOut ? "Latest Out" : showIn ? "Latest In" : "Latest Out"}
                       </div>
                     </div>
-                    <div className={`text-xs font-bold ${showOut ? "text-red-600" : showIn ? "text-green-600" : "text-gray-400"}`}>
+                    <div className={`text-xs font-bold ${showOut ? "text-rose-600 dark:text-rose-400" : showIn ? "text-emerald-600 dark:text-emerald-400" : "text-gray-400 dark:text-slate-500"}`}>
                       {showOut ? (
                         <>
                           {attendance.latestPunchTime}
                           {isLate && (
-                            <span className="text-red-500 font-semibold"> ({attendance.lateBy} late)</span>
+                            <span className="text-rose-500 dark:text-rose-400 font-semibold"> ({attendance.lateBy} late)</span>
                           )}
                         </>
                       ) : showIn ? (
                         <>
                           {attendance.clockInTime}
                           {isLate && (
-                            <span className="text-red-500 font-semibold"> ({attendance.lateBy} late)</span>
+                            <span className="text-rose-500 dark:text-rose-400 font-semibold"> ({attendance.lateBy} late)</span>
                           )}
                         </>
                       ) : (
@@ -191,11 +165,11 @@ export default function AttendanceCard({ attendance, canEditPunch = true }: Atte
 
             {/* Remaining Hours */}
             <div className="w-full text-right">
-              <div className="flex items-center gap-2 mb-2 justify-end">
-                <Hourglass size={14} className="text-blue-400" />
-                <div className="text-xs sm:text-sm font-medium text-muted-foreground">Remaining</div>
+              <div className="flex items-center gap-2 mb-1.5 justify-end">
+                <Hourglass size={14} className="text-blue-500 dark:text-blue-400" />
+                <div className="text-xs sm:text-sm font-medium text-gray-500 dark:text-slate-400">Remaining</div>
               </div>
-              <div className="text-orange-600 text-xs font-bold">
+              <div className="text-orange-600 dark:text-orange-400 text-xs font-bold">
                 {formatRemainingHours()}
               </div>
             </div>

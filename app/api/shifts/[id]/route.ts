@@ -30,7 +30,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const authHeader = request.headers.get("Authorization")
     const { id } = await params
     const body = await request.json()
-    
+
     const response = await fetch(`http://13.206.112.19:8080/api/shifts/${id}`, {
       method: "PUT",
       headers: {

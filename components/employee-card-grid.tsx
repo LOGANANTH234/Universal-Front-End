@@ -125,7 +125,7 @@ export default function EmployeeCardGrid({
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 items-start">
         {employees.map((employee) => {
           const isActive = employee.status === "Active"
 
@@ -220,11 +220,10 @@ export default function EmployeeCardGrid({
                         {canDeactivate && (
                           <DropdownMenuItem
                             onClick={() => handleStatusChange(employee, isActive ? "Inactive" : "Active")}
-                            className={`flex items-center gap-2 cursor-pointer font-medium ${
-                              isActive
-                                ? "text-red-600 dark:text-red-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20"
-                                : "text-green-600 dark:text-green-400 focus:text-green-600 focus:bg-green-50 dark:focus:bg-green-900/20"
-                            }`}
+                            className={`flex items-center gap-2 cursor-pointer font-medium ${isActive
+                              ? "text-red-600 dark:text-red-400 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20"
+                              : "text-green-600 dark:text-green-400 focus:text-green-600 focus:bg-green-50 dark:focus:bg-green-900/20"
+                              }`}
                           >
                             {isActive ? (
                               <>

@@ -134,7 +134,7 @@ export function MultiViewCalendar({
   }
 
   return (
-    <div className="p-3 w-[320px]">
+    <div className="p-3 w-[320px] text-slate-900 dark:text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <Button
@@ -272,11 +272,11 @@ export function MultiViewCalendar({
       )}
 
       {/* Today button at the bottom of calendar */}
-      <div className="mt-3 pt-3 border-t">
+      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800">
         <Button
           variant="outline"
           size="sm"
-          className="w-full"
+          className="w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100"
           onClick={handleToday}
         >
           Today

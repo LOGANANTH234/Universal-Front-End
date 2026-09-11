@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization')
-    
+
     if (!authHeader) {
       return NextResponse.json(
         { error: 'Missing authorization header' },

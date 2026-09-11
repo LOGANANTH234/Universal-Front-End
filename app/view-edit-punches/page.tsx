@@ -13,13 +13,13 @@ export default function ViewEditPunchesPage() {
     <RouteGuard>
       <div className="space-y-6">
         {/* Tab Navigation */}
-        <div className="flex gap-2 border-b border-slate-200 px-6 pt-6">
+        <div className="flex gap-2 border-b border-slate-200 dark:border-slate-800 px-6 pt-6">
           <button
             onClick={() => setActiveTab('edit')}
             className={`px-4 py-3 font-medium border-b-2 transition-colors ${
               activeTab === 'edit'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             View & Edit Punches
@@ -28,8 +28,8 @@ export default function ViewEditPunchesPage() {
             onClick={() => setActiveTab('history')}
             className={`px-4 py-3 font-medium border-b-2 transition-colors ${
               activeTab === 'history'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Employee Punch History
@@ -38,8 +38,8 @@ export default function ViewEditPunchesPage() {
             onClick={() => setActiveTab('summary')}
             className={`px-4 py-3 font-medium border-b-2 transition-colors ${
               activeTab === 'summary'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Daily Attendance Summary

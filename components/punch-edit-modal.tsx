@@ -28,11 +28,11 @@ interface PunchEditModalProps {
   workDate?: string
 }
 
-export default function PunchEditModal({ 
-  punch, 
+export default function PunchEditModal({
+  punch,
   allPunches,
-  open, 
-  onOpenChange, 
+  open,
+  onOpenChange,
   onSave,
   onRefresh,
   shiftStart,
@@ -40,13 +40,13 @@ export default function PunchEditModal({
   workDate = punch.date
 }: PunchEditModalProps) {
   const { auth } = useAuth()
-  
+
   // Helper functions
   const convert24to12 = (timeStr: string) => {
     // Handle both formats: "09:11" (24h) and "09:11 am" (12h with period)
     const trimmed = timeStr.trim()
     const hasPeriod = /\s?(am|pm)/i.test(trimmed)
-    
+
     if (hasPeriod) {
       // Already in 12h format: "09:11 am" or "09:11 PM"
       const match = trimmed.match(/(\d{1,2}):(\d{2})\s?(am|pm)/i)
@@ -63,7 +63,7 @@ export default function PunchEditModal({
       const hours12 = hrs % 12 || 12
       return { hours: hours12.toString().padStart(2, '0'), minutes: mins.toString().padStart(2, '0'), period }
     }
-    
+
     // Fallback
     return { hours: '00', minutes: '00', period: 'AM' }
   }
@@ -262,8 +262,8 @@ export default function PunchEditModal({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             className="bg-primary"
             disabled={isSubmitting}
           >
