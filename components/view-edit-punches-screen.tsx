@@ -1,4 +1,5 @@
 'use client'
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
@@ -180,7 +181,7 @@ export default function ViewEditPunchesScreen() {
     console.log('[v0] fetchEmployees triggered')
     setIsEmployeesLoading(true)
     try {
-      const response = await fetch('http://13.206.112.19:8080/api/employees/getAllPermittedEmployees', {
+      const response = await fetch(`${API_BASE_URL}/api/employees/getAllPermittedEmployees`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -486,7 +487,7 @@ export default function ViewEditPunchesScreen() {
       }
 
       const token = auth.token
-      const url = `http://13.206.112.19:8080/api/punch/delete/${punchId}`
+      const url = `${API_BASE_URL}/api/punch/delete/${punchId}`
       const response = await fetch(url, {
         method: 'DELETE',
         headers: {

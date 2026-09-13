@@ -1,4 +1,5 @@
 'use client'
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
@@ -316,7 +317,7 @@ export default function EmployeePunchHistoryScreen() {
       setError(null)
       try {
         const url =
-          `http://13.206.112.19:8080/api/punch/history` +
+          `${API_BASE_URL}/api/punch/history` +
           `?startDate=${startDate}&endDate=${endDate}&page=0&size=1000000`
         const res = await fetch(url, { headers: { Authorization: `Bearer ${auth.token}` } })
         if (!res.ok) throw new Error(`API error: ${res.statusText}`)

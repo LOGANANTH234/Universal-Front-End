@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect, useCallback } from "react"
 import { format, startOfMonth, endOfMonth, parseISO, isSameMonth } from "date-fns"
@@ -237,7 +238,7 @@ export function SalaryAnalyticsScreen() {
     async function fetchEmployees() {
       if (!auth?.token) return
       try {
-        const res = await fetch("http://13.206.112.19:8080/api/employees/getAllPermittedEmployees", {
+        const res = await fetch(`${API_BASE_URL}/api/employees/getAllPermittedEmployees`, {
           headers: { Authorization: `Bearer ${auth.token}` }
         })
         if (!res.ok) throw new Error("Failed to fetch employees")
@@ -264,7 +265,7 @@ export function SalaryAnalyticsScreen() {
     setError(null)
     try {
       const monthStr = format(currentMonth, "yyyy-MM") // e.g. "2026-08"
-      const res = await fetch(`http://13.206.112.19:8080/api/payrolls/getSalaryAnalytics?employeeId=${selectedEmployee}&month=${monthStr}`, {
+      const res = await fetch(`${API_BASE_URL}/api/payrolls/getSalaryAnalytics?employeeId=${selectedEmployee}&month=${monthStr}`, {
         headers: { Authorization: `Bearer ${auth.token}` }
       })
       if (!res.ok) throw new Error("Failed to fetch salary analytics")
@@ -295,7 +296,7 @@ export function SalaryAnalyticsScreen() {
     setDetailsLoading(true)
     try {
       const res = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/getDailySalaryDetail?employeeId=${selectedEmployee}&date=${dateStr}`,
+        `${API_BASE_URL}/api/payrolls/getDailySalaryDetail?employeeId=${selectedEmployee}&date=${dateStr}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (res.ok) {
@@ -342,7 +343,7 @@ export function SalaryAnalyticsScreen() {
   const handleDeletePunch = async (punchId: string) => {
     if (!auth?.token) throw new Error("Unauthorized – please login again.")
 
-    const response = await fetch(`http://13.206.112.19:8080/api/punch/delete/${punchId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/punch/delete/${punchId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${auth.token}` },
     })
@@ -380,7 +381,7 @@ export function SalaryAnalyticsScreen() {
   }
 
   return (
-    <div className="relative min-h-[calc(100vh-75px)] p-6 space-y-6 w-full bg-gradient-to-br from-slate-50 via-slate-100/70 to-blue-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden">
+    <div className="relative min-h-[calc(100vh-75px)] p-3 sm:p-6 space-y-4 sm:space-y-6 pb-24 lg:pb-6 w-full bg-gradient-to-br from-slate-50 via-slate-100/70 to-blue-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 overflow-hidden">
       {/* 3D Ambient Mesh & Light Orbs */}
       <div className="absolute -top-32 -right-32 w-[550px] h-[550px] bg-gradient-to-br from-blue-400/20 via-indigo-400/15 to-transparent dark:from-blue-600/10 dark:via-indigo-600/10 rounded-full blur-3xl pointer-events-none -z-0" />
       <div className="absolute top-1/2 -left-28 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-400/15 via-teal-300/10 to-transparent dark:from-emerald-600/10 dark:via-teal-500/5 rounded-full blur-3xl pointer-events-none -z-0" />
@@ -392,12 +393,12 @@ export function SalaryAnalyticsScreen() {
       <div className="relative z-10 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Salary Analytics</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Analyze salary deductions and attendance visually.</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Salary Analytics</h1>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Analyze salary deductions and attendance visually.</p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="w-[300px]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            <div className="w-full sm:w-[300px]">
               <SearchableComboBox
                 options={employees}
                 value={selectedEmployee || ""}
@@ -636,109 +637,115 @@ export function SalaryAnalyticsScreen() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="grid grid-cols-7 gap-3">
-                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                        <div key={day} className="text-center text-xs font-semibold text-slate-400 dark:text-slate-500 py-2">
-                          {day}
-                        </div>
-                      ))}
-
-                      {daysInMonth().map((date, i) => {
-                        if (!date) return <div key={`empty-${i}`} className="h-24 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl" />
-
-                        const dateStr = format(date, "yyyy-MM-dd")
-                        const statusInfo = analytics.dailyStatuses.find(d => d.date === dateStr) || {
-                          date: dateStr, status: "HOLIDAY", earned: 0, deduction: 0
-                        }
-
-                        const isSelected = selectedDate === dateStr
-                        const cardStyle = STATUS_CARD_STYLES[statusInfo.status] || STATUS_CARD_STYLES.HOLIDAY
-
-                        const isFilteredOut = selectedFilters.length > 0 && !selectedFilters.some(filterStatus => {
-                          if (filterStatus === "HOLIDAY") {
-                            return statusInfo.status === "HOLIDAY" || statusInfo.status === "SUNDAY" || statusInfo.status === "SATURDAY"
-                          }
-                          return statusInfo.status === filterStatus
-                        })
-
-                        return (
-                          <div
-                            key={dateStr}
-                            onClick={() => {
-                              handleDayClick(date, statusInfo)
-                            }}
-                            className={`min-h-[7.5rem] border rounded-2xl p-2.5 cursor-pointer transition-all duration-200 ease-out flex flex-col ${isFilteredOut ? 'opacity-20 grayscale pointer-events-auto scale-[0.98]' : 'hover:-translate-y-1 hover:shadow-[0_12px_24px_-4px_rgba(0,0,0,0.13),0_4px_8px_-2px_rgba(0,0,0,0.06)] shadow-[0_2px_6px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)]'
-                              } ${isSelected
-                                ? 'ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-slate-900 -translate-y-1 shadow-[0_14px_28px_rgba(59,130,246,0.22)] border-blue-400'
-                                : cardStyle.border
-                              } ${cardStyle.bg}`}
-                          >
-                            <div className="flex justify-between items-start mb-2.5">
-                              <span className={`text-sm font-semibold ${isSameMonth(date, new Date()) && date.getDate() === new Date().getDate()
-                                  ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs'
-                                  : cardStyle.text
-                                }`}>
-                                {date.getDate()}
-                              </span>
+                  <CardContent className="p-2.5 sm:p-6">
+                    <div className="overflow-x-auto -mx-1 px-1 sm:mx-0 sm:px-0 pb-2 scrollbar-thin">
+                      <div className="min-w-[580px] sm:min-w-0">
+                        <div className="grid grid-cols-7 gap-1.5 sm:gap-3">
+                          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                            <div key={day} className="text-center text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 py-1 sm:py-2">
+                              {day}
                             </div>
+                          ))}
 
-                            {statusInfo.status !== 'HOLIDAY' && statusInfo.status !== 'SUNDAY' && statusInfo.status !== 'SATURDAY' && (() => {
-                              const otPay = statusInfo.overtimePay || 0
-                              const regularPay = Math.max(0, (statusInfo.earned || 0) - otPay)
-                              return (
-                                <div className="flex flex-col gap-[3px]">
-                                  {/* Worked hours */}
-                                  {(statusInfo.workedMinutes !== undefined && statusInfo.expectedMinutes !== undefined && statusInfo.expectedMinutes > 0) && (
-                                    <div className="text-[11px] font-bold text-blue-700 dark:text-slate-200 truncate flex items-center gap-1 leading-none">
-                                      <Clock className="w-3.5 h-3.5 text-blue-600 dark:text-sky-400 shrink-0 -translate-y-[1px]" />
-                                      <span className="leading-none">{Math.floor(statusInfo.workedMinutes / 60)}h {statusInfo.workedMinutes % 60}m</span>
-                                      <span className="text-slate-600 dark:text-slate-400 font-semibold leading-none"> / {Math.floor(statusInfo.expectedMinutes / 60)}h</span>
-                                    </div>
-                                  )}
-                                  {/* Regular + OT pay - aligned */}
-                                  {(regularPay > 0 || otPay > 0) && (
-                                    <div className="flex flex-col gap-[1px]">
-                                      {regularPay > 0 && (() => {
-                                        const expectedPay = statusInfo.expectedPay || 0
-                                        const trueDeduction = Math.round(expectedPay - regularPay)
-                                        return (
-                                          <div className="flex items-center text-[12px] font-bold text-emerald-800 dark:text-emerald-300">
-                                            <span className="inline-block w-7">REG</span>
-                                            <span className="mr-1">:</span>
-                                            <span>₹{regularPay.toFixed(0)}</span>
-                                            {trueDeduction > 0 && statusInfo.status !== 'ABSENT' && (
-                                              <span className="ml-1 text-[11px] font-semibold text-red-600 dark:text-rose-400">(-{trueDeduction})</span>
+                          {daysInMonth().map((date, i) => {
+                            if (!date) return <div key={`empty-${i}`} className="min-h-[5.5rem] sm:min-h-[7.5rem] bg-slate-50/50 dark:bg-slate-800/30 rounded-xl sm:rounded-2xl" />
+
+                            const dateStr = format(date, "yyyy-MM-dd")
+                            const statusInfo = analytics.dailyStatuses.find(d => d.date === dateStr) || {
+                              date: dateStr, status: "HOLIDAY", earned: 0, deduction: 0
+                            }
+
+                            const isSelected = selectedDate === dateStr
+                            const cardStyle = STATUS_CARD_STYLES[statusInfo.status] || STATUS_CARD_STYLES.HOLIDAY
+
+                            const isFilteredOut = selectedFilters.length > 0 && !selectedFilters.some(filterStatus => {
+                              if (filterStatus === "HOLIDAY") {
+                                return statusInfo.status === "HOLIDAY" || statusInfo.status === "SUNDAY" || statusInfo.status === "SATURDAY"
+                              }
+                              return statusInfo.status === filterStatus
+                            })
+
+                            return (
+                              <div
+                                key={dateStr}
+                                onClick={() => {
+                                  handleDayClick(date, statusInfo)
+                                }}
+                                className={`min-h-[5.5rem] sm:min-h-[7.5rem] border rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 cursor-pointer overflow-hidden transition-all duration-200 ease-out flex flex-col justify-between ${isFilteredOut ? 'opacity-20 grayscale pointer-events-auto scale-[0.98]' : 'hover:-translate-y-1 hover:shadow-[0_12px_24px_-4px_rgba(0,0,0,0.13),0_4px_8px_-2px_rgba(0,0,0,0.06)] shadow-[0_2px_6px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)]'
+                                  } ${isSelected
+                                    ? 'ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-slate-900 -translate-y-1 shadow-[0_14px_28px_rgba(59,130,246,0.22)] border-blue-400'
+                                    : cardStyle.border
+                                  } ${cardStyle.bg}`}
+                              >
+                                <div>
+                                  <div className="flex justify-between items-start mb-1 sm:mb-2">
+                                    <span className={`text-xs sm:text-sm font-semibold ${isSameMonth(date, new Date()) && date.getDate() === new Date().getDate()
+                                        ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold text-[10px] sm:text-xs'
+                                        : cardStyle.text
+                                      }`}>
+                                      {date.getDate()}
+                                    </span>
+                                  </div>
+
+                                  {statusInfo.status !== 'HOLIDAY' && statusInfo.status !== 'SUNDAY' && statusInfo.status !== 'SATURDAY' && (() => {
+                                    const otPay = statusInfo.overtimePay || 0
+                                    const regularPay = Math.max(0, (statusInfo.earned || 0) - otPay)
+                                    return (
+                                      <div className="flex flex-col gap-0.5 sm:gap-[3px]">
+                                        {/* Worked hours */}
+                                        {(statusInfo.workedMinutes !== undefined && statusInfo.expectedMinutes !== undefined && statusInfo.expectedMinutes > 0) && (
+                                          <div className="text-[10px] sm:text-[11px] font-bold text-blue-700 dark:text-slate-200 truncate flex items-center gap-1 leading-none mb-0.5 sm:mb-1">
+                                            <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-600 dark:text-sky-400 shrink-0 -translate-y-[0.5px]" />
+                                            <span className="leading-none whitespace-nowrap">{Math.floor(statusInfo.workedMinutes / 60)}h {statusInfo.workedMinutes % 60}m</span>
+                                            <span className="text-slate-600 dark:text-slate-400 font-semibold leading-none hidden sm:inline"> / {Math.floor(statusInfo.expectedMinutes / 60)}h</span>
+                                          </div>
+                                        )}
+                                        {/* Regular + OT pay - aligned */}
+                                        {(regularPay > 0 || otPay > 0) && (
+                                          <div className="flex flex-col gap-[1px]">
+                                            {regularPay > 0 && (() => {
+                                              const expectedPay = statusInfo.expectedPay || 0
+                                              const trueDeduction = Math.round(expectedPay - regularPay)
+                                              return (
+                                                <div className="flex items-center text-[10px] sm:text-[12px] font-bold text-emerald-800 dark:text-emerald-300 leading-tight">
+                                                  <span className="inline-block w-6 sm:w-7 text-[8.5px] sm:text-[11px]">REG</span>
+                                                  <span className="mr-0.5 sm:mr-1">:</span>
+                                                  <span className="truncate">₹{regularPay.toFixed(0)}</span>
+                                                  {trueDeduction > 0 && statusInfo.status !== 'ABSENT' && (
+                                                    <span className="ml-1 text-[8.5px] sm:text-[11px] font-semibold text-red-600 dark:text-rose-400 hidden sm:inline">(-{trueDeduction})</span>
+                                                  )}
+                                                </div>
+                                              )
+                                            })()}
+                                            {otPay > 0 && (
+                                              <div className="flex items-center text-[10px] sm:text-[12px] font-bold text-purple-700 dark:text-amber-300 leading-tight">
+                                                <span className="inline-block w-6 sm:w-7 text-[8.5px] sm:text-[11px]">OT</span>
+                                                <span className="mr-0.5 sm:mr-1">:</span>
+                                                <span className="truncate">₹{otPay.toFixed(0)}</span>
+                                              </div>
                                             )}
+                                            {otPay > 0 && regularPay > 0 && (() => {
+                                              const totalDayPay = Math.round(statusInfo.earned || (regularPay + otPay))
+                                              return (
+                                                <div className="flex items-center text-[10px] sm:text-[12px] font-bold text-blue-600 dark:text-sky-300 mt-0.5 leading-tight">
+                                                  <span className="inline-block w-6 sm:w-7 text-[8.5px] sm:text-[11px]">TOT</span>
+                                                  <span className="mr-0.5 sm:mr-1">:</span>
+                                                  <span className="font-extrabold text-blue-700 dark:text-sky-200 truncate">₹{totalDayPay}</span>
+                                                </div>
+                                              )
+                                            })()}
                                           </div>
-                                        )
-                                      })()}
-                                      {otPay > 0 && (
-                                        <div className="flex items-center text-[12px] font-bold text-purple-700 dark:text-amber-300">
-                                          <span className="inline-block w-7">OT</span>
-                                          <span className="mr-1">:</span>
-                                          <span>₹{otPay.toFixed(0)}</span>
-                                        </div>
-                                      )}
-                                      {otPay > 0 && regularPay > 0 && (() => {
-                                        const totalDayPay = Math.round(statusInfo.earned || (regularPay + otPay))
-                                        return (
-                                          <div className="flex items-center text-[12px] font-bold text-blue-600 dark:text-sky-300 mt-0.5">
-                                            <span className="inline-block w-7">TOT</span>
-                                            <span className="mr-1">:</span>
-                                            <span className="font-extrabold text-blue-700 dark:text-sky-200">₹{totalDayPay}</span>
-                                          </div>
-                                        )
-                                      })()}
-                                    </div>
-                                  )}
+                                        )}
 
+                                      </div>
+                                    )
+                                  })()}
                                 </div>
-                              )
-                            })()}
-                          </div>
-                        )
-                      })}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

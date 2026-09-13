@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 import { NextRequest, NextResponse } from 'next/server'
 
 interface PunchUpdateRequest {
@@ -28,7 +29,7 @@ export async function POST(
 
     // Forward to backend API
     const response = await fetch(
-      `http://13.206.112.19:8080/api/punch/${id}`,
+      `${API_BASE_URL}/api/punch/${id}`,
       {
         method: 'POST',
         headers: {

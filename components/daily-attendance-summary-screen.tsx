@@ -1,4 +1,5 @@
 'use client'
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/contexts/auth-context'
@@ -62,7 +63,7 @@ export default function DailyAttendanceSummaryScreen() {
         })
 
         const res = await fetch(
-          `http://13.206.112.19:8080/api/live-attendance/summary-history?${params}`,
+          `${API_BASE_URL}/api/live-attendance/summary-history?${params}`,
           { headers: { Authorization: `Bearer ${auth.token}` } }
         )
         if (!res.ok) throw new Error(`API error: ${res.statusText}`)

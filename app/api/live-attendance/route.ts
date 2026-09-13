@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const response = await fetch('http://13.206.112.19:8080/api/live-attendance', {
+    const response = await fetch(`${API_BASE_URL}/api/live-attendance`, {
       method: 'GET',
       headers: {
         'Authorization': authHeader,

@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect } from "react"
 import { X, Search, Plus, Trash2, AlertCircle, HelpCircle } from "lucide-react"
@@ -558,8 +559,8 @@ export default function EmployeeFormModal({ isOpen, employee, onClose, onSave }:
 
       const isUpdate = !!employee
       const url = isUpdate
-        ? `http://13.206.112.19:8080/api/employees/updateEmployee/${employee.id}`
-        : "http://13.206.112.19:8080/api/employees/addEmployee"
+        ? `${API_BASE_URL}/api/employees/updateEmployee/${employee.id}`
+        : `${API_BASE_URL}/api/employees/addEmployee`
       const method = isUpdate ? "PUT" : "POST"
 
       const token = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")!).token : null

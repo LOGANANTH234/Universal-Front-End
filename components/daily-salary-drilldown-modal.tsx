@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import {
@@ -258,7 +259,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
     try {
       // 1️⃣  Drilldown detail (shifts, punches, breakdown, uncovered intervals)
       const detailRes = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/getDailySalaryDetail?employeeId=${record.employeeId}&date=${record.workDate}`,
+        `${API_BASE_URL}/api/payrolls/getDailySalaryDetail?employeeId=${record.employeeId}&date=${record.workDate}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!detailRes.ok) throw new Error(`${detailRes.status} ${detailRes.statusText}`)
@@ -268,7 +269,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
       // 2️⃣  Re-fetch the summary record so net salary is fresh.
       try {
         const summaryRes = await fetch(
-          `http://13.206.112.19:8080/api/payrolls/getDailySalary?employeeId=${record.employeeId}&date=${record.workDate}`,
+          `${API_BASE_URL}/api/payrolls/getDailySalary?employeeId=${record.employeeId}&date=${record.workDate}`,
           { headers: { Authorization: `Bearer ${auth.token}` } }
         )
         if (summaryRes.ok) {
@@ -320,7 +321,7 @@ export function DailySalaryDrilldownModal({ record, open, onOpenChange, onRecord
   const handleDeletePunch = async (punchId: string) => {
     if (!auth?.token) throw new Error("Unauthorized – please login again.")
 
-    const response = await fetch(`http://13.206.112.19:8080/api/punch/delete/${punchId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/punch/delete/${punchId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${auth.token}` },
     })

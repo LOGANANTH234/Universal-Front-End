@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useMemo, useEffect } from "react"
 import { Search, Filter, AlertCircle, CalendarIcon, Eye, X, CheckCircle2, XCircle, Loader2, AlertTriangle } from "lucide-react"
@@ -34,12 +35,12 @@ interface ApiEmployee {
 // Per-employee generation status tracked during bulk generate
 type GenStatus = "idle" | "generating" | "done" | "failed"
 
-const BASE = "http://13.206.112.19:8080/api/pdf"
-const SALARY = "http://13.206.112.19:8080/api/payrolls"
+const BASE = `${API_BASE_URL}/api/pdf`
+const SALARY = `${API_BASE_URL}/api/payrolls`
 
 export function GeneratePayslipScreen() {
   const [selectedEmployee, setSelectedEmployee] = useState<string>("")
-  const [selectedType, setSelectedType] = useState<string>("monthly")
+  const [selectedType, setSelectedType] = useState<string>("weekly")
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedStatus, setSelectedStatus] = useState<string>("")
   const [searchQuery, setSearchQuery] = useState<string>("")

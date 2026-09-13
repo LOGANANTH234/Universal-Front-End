@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ date: string }> }
@@ -13,7 +14,7 @@ export async function GET(
       )
     }
 
-    const backendUrl = `http://13.206.112.19:8080/api/punch/${encodeURIComponent(date)}`
+    const backendUrl = `${API_BASE_URL}/api/punch/${encodeURIComponent(date)}`
 
     console.log("[v0] Fetching punches from backend:", backendUrl)
 

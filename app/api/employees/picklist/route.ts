@@ -1,6 +1,5 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 import { type NextRequest, NextResponse } from "next/server"
-
-const API_BASE_URL = process.env.API_BASE_URL || "http://13.206.112.19:8080"
 
 export async function GET(request: NextRequest) {
   try {

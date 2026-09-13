@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 import { NextResponse } from "next/server"
 
 export async function GET(request: Request) {
@@ -5,8 +6,8 @@ export async function GET(request: Request) {
     const authHeader = request.headers.get("Authorization")
     const candidates = [
       process.env.API_BASE_URL,
-      "http://13.206.112.19:8080",
-      "http://13.206.112.19:8080",
+      API_BASE_URL,
+      API_BASE_URL,
     ].filter(Boolean) as string[]
 
     let data: any[] | null = null

@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { Phone, MoreVertical, Edit2, Trash2, ShuffleIcon, LucideTimerOff as LucideTimerOffIcon, IndianRupeeIcon, UserCircle2Icon, User, Eye, CheckCircle, XCircle, Key } from "lucide-react"
 import type { Employee } from "@/lib/employee-types"
@@ -91,7 +92,7 @@ export default function EmployeeCardGrid({
     }
 
     try {
-      const response = await apiClient(`http://13.206.112.19:8080/api/users/${changePasswordEmployee.id}`, {
+      const response = await apiClient(`${API_BASE_URL}/api/users/${changePasswordEmployee.id}`, {
         method: "PUT",
         body: {
           newPassword,

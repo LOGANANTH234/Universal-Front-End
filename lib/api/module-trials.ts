@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 export interface ModuleTrialInfo {
   moduleCode: string
   settingKey: string
@@ -10,7 +11,9 @@ export interface ModuleTrialInfo {
 
 export type ModuleTrialsMap = Record<string, ModuleTrialInfo>
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://13.206.112.19:8080"
+function getBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_API_URL || API_BASE_URL
+}
 
 function normalizeTrial(raw: any): ModuleTrialInfo | null {
   if (!raw) return null
@@ -26,15 +29,16 @@ function normalizeTrial(raw: any): ModuleTrialInfo | null {
 }
 
 export async function fetchAllModuleTrials(): Promise<ModuleTrialsMap> {
+  const baseUrl = getBaseUrl()
   try {
-    const res = await fetch(`${API_BASE_URL}/api/modules/trials`, {
+    const res = await fetch(`${baseUrl}/api/modules/trials`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
     })
 
     if (!res.ok) {
-      console.warn(`[ModuleTrials] HTTP ${res.status} from ${API_BASE_URL}`)
+      console.warn(`[ModuleTrials] HTTP ${res.status} from ${baseUrl}`)
       return {}
     }
 
@@ -56,9 +60,10 @@ export async function fetchAllModuleTrials(): Promise<ModuleTrialsMap> {
 export async function fetchModuleTrial(moduleCode: string): Promise<ModuleTrialInfo | null> {
   if (!moduleCode) return null
   const code = moduleCode.trim().toUpperCase()
+  const baseUrl = getBaseUrl()
 
   try {
-    const res = await fetch(`${API_BASE_URL}/api/modules/trials/${encodeURIComponent(code)}`, {
+    const res = await fetch(`${baseUrl}/api/modules/trials/${encodeURIComponent(code)}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",

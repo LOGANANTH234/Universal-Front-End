@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
@@ -190,7 +191,7 @@ export function WeeklySalaryScreen() {
     setLoading(true); setError(null)
     try {
       const res = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/getWeeklySalary?fromDate=${range.start}&toDate=${range.end}`,
+        `${API_BASE_URL}/api/payrolls/getWeeklySalary?fromDate=${range.start}&toDate=${range.end}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) throw new Error(`API error: ${res.statusText}`)
@@ -223,7 +224,7 @@ export function WeeklySalaryScreen() {
       const results = await Promise.all(
         days.map(async (day) => {
           const res = await fetch(
-            `http://13.206.112.19:8080/api/payrolls/getDailySalary?date=${day}`,
+            `${API_BASE_URL}/api/payrolls/getDailySalary?date=${day}`,
             { headers: { Authorization: `Bearer ${auth!.token}` } }
           )
           if (!res.ok) return []
@@ -249,7 +250,7 @@ export function WeeklySalaryScreen() {
     if (!auth?.token) return false
     try {
       const res = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/getDailySalary?date=${todayStr()}`,
+        `${API_BASE_URL}/api/payrolls/getDailySalary?date=${todayStr()}`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) return false
@@ -274,7 +275,7 @@ export function WeeklySalaryScreen() {
     setGeneratingDaily(true)
     try {
       const res = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/calculate-daily-salary?date=${todayStr()}`,
+        `${API_BASE_URL}/api/payrolls/calculate-daily-salary?date=${todayStr()}`,
         { method: "POST", headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) throw new Error(await res.text())
@@ -292,7 +293,7 @@ export function WeeklySalaryScreen() {
     try {
       const d = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
       const res = await fetch(
-        `http://13.206.112.19:8080/api/payrolls/GenerateWeeklySalary?anyDateInWeek=${d}`,
+        `${API_BASE_URL}/api/payrolls/GenerateWeeklySalary?anyDateInWeek=${d}`,
         { method: "POST", headers: { Authorization: `Bearer ${auth.token}` } }
       )
       if (!res.ok) throw new Error(`API error: ${res.statusText}`)

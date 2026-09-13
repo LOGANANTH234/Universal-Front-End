@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import React, { useState, useEffect } from "react"
 import { useAuth } from "@/lib/contexts/auth-context"
@@ -14,6 +15,7 @@ import {
   Loader2,
   Save,
   RotateCcw,
+  RotateCw,
   Info,
   Clock,
   TrendingUp,
@@ -25,24 +27,16 @@ import { Badge } from "@/components/ui/badge"
 import { useHasAction, MODULES, ACTIONS } from "@/lib/permission-utils"
 import { TimePickerCompact } from "@/components/time-picker-compact"
 import { to12HourFormat } from "@/lib/shift-utils"
-
-interface AppSettings {
-  penaltyDeductionEnabled: boolean
-  warningsBeforePenalty: number
-  themeMode: "dark" | "light"
-  penaltyDeductionMinutes: number
-  allowanceEligibilityPercent: number
-  overtimeMinimumMinutes: number
-  dailySalaryCalculationTime: string
-}
+import { AppSettings, useSettingsCache } from "@/lib/contexts/settings-cache-context"
 
 export function SettingsScreen() {
+  const settingsCache = useSettingsCache()
   const { auth } = useAuth()
   const token = auth?.token
   const { dark, setTheme } = useTheme()
   const canEdit = useHasAction(MODULES.SETTINGS, ACTIONS.SETTINGS_EDIT)
 
-  const [settings, setSettings] = useState<AppSettings>({
+  const defaultSettings: AppSettings = {
     penaltyDeductionEnabled: true,
     warningsBeforePenalty: 3,
     themeMode: dark ? "dark" : "light",
@@ -50,59 +44,64 @@ export function SettingsScreen() {
     allowanceEligibilityPercent: 50,
     overtimeMinimumMinutes: 30,
     dailySalaryCalculationTime: "06:30",
-  })
+  }
 
-  const [originalSettings, setOriginalSettings] = useState<AppSettings | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [settings, setSettings] = useState<AppSettings>(
+    settingsCache.settings || defaultSettings
+  )
+
+  const [originalSettings, setOriginalSettings] = useState<AppSettings | null>(
+    settingsCache.settings || null
+  )
+  const [loading, setLoading] = useState(!settingsCache.hasLoaded)
   const [saving, setSaving] = useState(false)
+  const [runningNow, setRunningNow] = useState(false)
   const [notice, setNotice] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null)
 
   const getApiBase = () => {
-    return process.env.NEXT_PUBLIC_BACKEND_URL || "http://13.206.112.19:8080"
+    return process.env.NEXT_PUBLIC_BACKEND_URL || API_BASE_URL
   }
 
-  // Fetch settings on mount
-  useEffect(() => {
-    async function fetchSettings() {
-      if (!token) return
-      setLoading(true)
-      try {
-        const baseUrl = getApiBase()
-        const res = await fetch(`${baseUrl}/api/settings`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (!res.ok) {
-          throw new Error(`Failed to load settings (status ${res.status})`)
-        }
-
-        const data: AppSettings = await res.json()
-        setSettings(data)
-        setOriginalSettings(data)
-
-        if (data.themeMode) {
-          setTheme(data.themeMode)
-        }
-      } catch (err: any) {
-        console.error("Error fetching settings:", err)
-        setOriginalSettings({
-          penaltyDeductionEnabled: true,
-          warningsBeforePenalty: 3,
-          themeMode: dark ? "dark" : "light",
-          penaltyDeductionMinutes: 60,
-          allowanceEligibilityPercent: 50,
-          overtimeMinimumMinutes: 30,
-          dailySalaryCalculationTime: "06:30",
-        })
-      } finally {
-        setLoading(false)
-      }
+  // Fetch settings once, then cache
+  const fetchSettings = async (forceRefresh = false) => {
+    if (!token) return
+    if (settingsCache.hasLoaded && !forceRefresh) {
+      return
     }
+    setLoading(true)
+    try {
+      const baseUrl = getApiBase()
+      const res = await fetch(`${baseUrl}/api/settings`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
+      if (!res.ok) {
+        throw new Error(`Failed to load settings (status ${res.status})`)
+      }
+
+      const data: AppSettings = await res.json()
+      setSettings(data)
+      setOriginalSettings(data)
+      settingsCache.setSettings(data)
+
+      if (data.themeMode) {
+        setTheme(data.themeMode)
+      }
+    } catch (err: any) {
+      console.error("Error fetching settings:", err)
+      if (!settingsCache.hasLoaded) {
+        setOriginalSettings(defaultSettings)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchSettings()
-  }, [token])
+  }, [token, settingsCache.hasLoaded])
 
   // Handle Theme Toggle
   const handleThemeChange = (mode: "dark" | "light") => {
@@ -135,6 +134,7 @@ export function SettingsScreen() {
       const updated: AppSettings = await res.json()
       setSettings(updated)
       setOriginalSettings(updated)
+      settingsCache.setSettings(updated)
       setTheme(updated.themeMode)
 
       setNotice({
@@ -160,13 +160,36 @@ export function SettingsScreen() {
     }
   }
 
+  const handleRunNow = async () => {
+    if (!token || runningNow) return
+    setRunningNow(true)
+    setNotice(null)
+    try {
+      const baseUrl = getApiBase()
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+      const dateStr = yesterday.toISOString().split("T")[0]
+      const res = await fetch(`${baseUrl}/api/payroll/calculate-daily-salary?date=${dateStr}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error(`Server returned ${res.status}`)
+      setNotice({ type: "success", text: `Daily salary calculation triggered successfully for ${dateStr}.` })
+    } catch (err: any) {
+      setNotice({ type: "error", text: err?.message || "Failed to trigger salary calculation." })
+    } finally {
+      setRunningNow(false)
+    }
+  }
+
   const isDirty = originalSettings
     ? settings.penaltyDeductionEnabled !== originalSettings.penaltyDeductionEnabled ||
     settings.warningsBeforePenalty !== originalSettings.warningsBeforePenalty ||
     settings.themeMode !== originalSettings.themeMode ||
     settings.penaltyDeductionMinutes !== originalSettings.penaltyDeductionMinutes ||
     settings.allowanceEligibilityPercent !== originalSettings.allowanceEligibilityPercent ||
-    settings.overtimeMinimumMinutes !== originalSettings.overtimeMinimumMinutes
+    settings.overtimeMinimumMinutes !== originalSettings.overtimeMinimumMinutes ||
+    settings.dailySalaryCalculationTime !== originalSettings.dailySalaryCalculationTime
     : false
 
   if (loading) {
@@ -195,6 +218,17 @@ export function SettingsScreen() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchSettings(true)}
+            disabled={loading || saving}
+            className="border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 gap-1.5 cursor-pointer shadow-2xs"
+            title="Refresh settings from server"
+          >
+            <RotateCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
+          </Button>
           {!canEdit ? (
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-300 dark:border-amber-800/80 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-semibold shadow-xs">
               <Lock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
@@ -208,7 +242,7 @@ export function SettingsScreen() {
                   size="sm"
                   onClick={handleReset}
                   disabled={saving}
-                  className="border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 gap-1.5"
+                  className="border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 gap-1.5 cursor-pointer"
                 >
                   <RotateCcw className="w-4 h-4" />
                   Reset
@@ -680,6 +714,26 @@ export function SettingsScreen() {
                         )
                       })}
                     </div>
+
+                    {/* Run Now button */}
+                    <button
+                      type="button"
+                      onClick={handleRunNow}
+                      disabled={runningNow}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all ${
+                        runningNow
+                          ? "bg-purple-100 dark:bg-purple-950/40 text-purple-400 dark:text-purple-500 border-purple-200 dark:border-purple-800 cursor-not-allowed"
+                          : "bg-purple-600 hover:bg-purple-700 text-white border-purple-600 cursor-pointer shadow-sm"
+                      }`}
+                      title="Manually run daily salary calculation for yesterday right now"
+                    >
+                      {runningNow ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <TrendingUp className="w-3 h-3" />
+                      )}
+                      {runningNow ? "Running..." : "Run Now"}
+                    </button>
                   </div>
                 </td>
               </tr>

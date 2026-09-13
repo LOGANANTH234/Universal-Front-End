@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
@@ -6,7 +7,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     console.log("[v0] API: Fetching role config for role:", roleId)
 
-    const response = await fetch(`http://13.206.112.19:8080/api/roles/${roleId}/config`, {
+    const response = await fetch(`${API_BASE_URL}/api/roles/${roleId}/config`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

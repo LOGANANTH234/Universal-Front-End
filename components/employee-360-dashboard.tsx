@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect, useCallback, useMemo } from "react"
 import {
@@ -127,7 +128,7 @@ interface WarningRow {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BASE = "http://13.206.112.19:8080"
+const BASE = API_BASE_URL
 
 function fmt(n: number | null | undefined) {
   if (n == null || isNaN(n)) return "₹0.00"

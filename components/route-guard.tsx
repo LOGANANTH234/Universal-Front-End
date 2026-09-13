@@ -40,6 +40,13 @@ export function RouteGuard({ children, requiredModule }: RouteGuardProps) {
       return
     }
 
+    // Trial/preview modules: always grant access regardless of assigned modules
+    const TRIAL_PREVIEW_MODULES = ["BONUS_MANAGEMENT", "SALARY"]
+    if (moduleToCheck && TRIAL_PREVIEW_MODULES.includes(moduleToCheck)) {
+      setIsChecking(false)
+      return
+    }
+
     // Check if user has the required module
     const hasModule = auth.modules && auth.modules.some((m) => m.moduleCode === moduleToCheck)
 
@@ -62,6 +69,12 @@ export function RouteGuard({ children, requiredModule }: RouteGuardProps) {
   }
 
   const activeModule = requiredModule || getRequiredModule(pathname)
+
+  // Some modules manage their own per-tab trial banners; skip the page-level banner for them
+  const SELF_MANAGED_TRIAL_BANNERS = ["SALARY"]
+  if (activeModule && SELF_MANAGED_TRIAL_BANNERS.includes(activeModule)) {
+    return <>{children}</>
+  }
 
   // Render children if access is granted with trial banner on top
   return (

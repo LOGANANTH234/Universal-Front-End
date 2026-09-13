@@ -6,22 +6,20 @@ import "./globals.css"
 import { LayoutContent } from "@/components/layout-content"
 import { ShiftCacheProvider } from "@/lib/contexts/shift-cache-context"
 import { EmployeeCacheProvider } from "@/lib/contexts/employee-cache-context"
+import { BonusCacheProvider } from "@/lib/contexts/bonus-cache-context"
+import { SettingsCacheProvider } from "@/lib/contexts/settings-cache-context"
+import { HolidayCacheProvider } from "@/lib/contexts/holiday-cache-context"
 import { AuthProvider } from "@/lib/contexts/auth-context"
+import { BRANDING } from "@/lib/branding-config"
 
 const _geist     = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Universal",
-  description: "Workforce Attendance Management",
+  title: BRANDING.name,
+  description: BRANDING.description,
   generator: "v0.app",
- icons: {
-  icon: [
-    { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
-    { url: "/icon-dark-32x32.png",  media: "(prefers-color-scheme: dark)"  },
-  ],
-  apple: "/images/image.png",
-},
+  icons: BRANDING.icons,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -44,7 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <ShiftCacheProvider>
             <EmployeeCacheProvider>
-              <LayoutContent>{children}</LayoutContent>
+              <BonusCacheProvider>
+                <SettingsCacheProvider>
+                  <HolidayCacheProvider>
+                    <LayoutContent>{children}</LayoutContent>
+                  </HolidayCacheProvider>
+                </SettingsCacheProvider>
+              </BonusCacheProvider>
             </EmployeeCacheProvider>
           </ShiftCacheProvider>
         </AuthProvider>

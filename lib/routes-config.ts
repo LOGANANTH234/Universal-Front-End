@@ -64,6 +64,9 @@ export const ROUTE_CONFIG = {
   "/leave-management": {
     requiredModule: MODULES.LEAVE_MANAGEMENT,
   },
+  "/bonus-management": {
+    requiredModule: MODULES.BONUS_MANAGEMENT,
+  },
 } as const
 
 // Helper function to get required module for a route

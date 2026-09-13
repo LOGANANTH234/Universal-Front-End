@@ -1,8 +1,9 @@
+import { API_BASE_URL } from "@/lib/branding-config"
 export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get("Authorization")
 
-    const response = await fetch("http://13.206.112.19:8080/api/roles/getAllRoleLabelList", {
+    const response = await fetch(`${API_BASE_URL}/api/roles/getAllRoleLabelList`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

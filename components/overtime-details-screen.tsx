@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
@@ -52,7 +53,7 @@ export function OvertimeDetailsScreen() {
         const day = String(selectedDate.getDate()).padStart(2, '0')
         const dateString = `${year}-${month}-${day}`
         const response = await fetch(
-          `http://13.206.112.19:8080/api/payrolls/getOvertTimeSalaryDetails?date=${dateString}`,
+          `${API_BASE_URL}/api/payrolls/getOvertTimeSalaryDetails?date=${dateString}`,
           {
             headers: {
               Authorization: `Bearer ${auth.token}`,

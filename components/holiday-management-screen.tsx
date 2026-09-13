@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
@@ -17,17 +18,12 @@ import {
   AlertCircle,
   Sparkles,
   Info,
-  DollarSign
+  DollarSign,
+  RotateCw,
 } from "lucide-react"
 import { useHasAction, MODULES, ACTIONS } from "@/lib/permission-utils"
 import { useAuth } from "@/lib/contexts/auth-context"
-
-interface Holiday {
-  id: string
-  date: string // YYYY-MM-DD format
-  name: string
-  description?: string
-}
+import { Holiday, useHolidayCache } from "@/lib/contexts/holiday-cache-context"
 
 interface HolidayBackendDto {
   id?: number
@@ -54,12 +50,17 @@ const MONTHS = [
 ]
 
 export function HolidayManagementScreen() {
+  const holidayCache = useHolidayCache()
   const { auth } = useAuth()
   const token = auth?.token || (typeof window !== "undefined" ? localStorage.getItem("token") : null)
 
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
-  const [holidays, setHolidays] = useState<Holiday[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
+  const [holidays, setHolidays] = useState<Holiday[]>(
+    holidayCache.getHolidaysForYear(new Date().getFullYear()) || []
+  )
+  const [loading, setLoading] = useState<boolean>(
+    !holidayCache.hasLoadedYear(new Date().getFullYear())
+  )
   const [saving, setSaving] = useState<boolean>(false)
   const [notice, setNotice] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null)
 
@@ -75,15 +76,28 @@ export function HolidayManagementScreen() {
   const isReadOnly = canViewHoliday && !canEditHoliday
 
   const getApiBase = () => {
-    if (typeof window !== "undefined" && window.location.hostname === "localhost") {
-      return "http://13.206.112.19:8080"
-    }
-    return process.env.NEXT_PUBLIC_API_URL || "http://13.206.112.19:8080"
+    return process.env.NEXT_PUBLIC_API_URL || API_BASE_URL
   }
 
-  // Load holidays for selected year from backend API
-  const fetchHolidays = useCallback(async (year: number) => {
+  // Synchronize holidays when holidayCache changes for selectedYear
+  useEffect(() => {
+    const cached = holidayCache.getHolidaysForYear(selectedYear)
+    if (cached) {
+      setHolidays(cached)
+    }
+  }, [selectedYear, holidayCache])
+
+  // Load holidays for selected year from backend API once, then cache
+  const fetchHolidays = useCallback(async (year: number, forceRefresh = false) => {
     if (!token) return
+    if (holidayCache.hasLoadedYear(year) && !forceRefresh) {
+      const cached = holidayCache.getHolidaysForYear(year)
+      if (cached) {
+        setHolidays(cached)
+        setLoading(false)
+      }
+      return
+    }
     setLoading(true)
     setNotice(null)
     try {
@@ -107,13 +121,14 @@ export function HolidayManagementScreen() {
       }))
 
       setHolidays(mapped)
+      holidayCache.setHolidaysForYear(year, mapped)
     } catch (err: any) {
       console.error("Error fetching holidays:", err)
       setNotice({ type: "error", text: err?.message || "Failed to load holidays from server" })
     } finally {
       setLoading(false)
     }
-  }, [token])
+  }, [token, holidayCache])
 
   useEffect(() => {
     if (token) {
@@ -216,6 +231,7 @@ export function HolidayManagementScreen() {
         const filtered = prev.filter((h) => h.date !== savedHoliday.date)
         return [...filtered, savedHoliday]
       })
+      holidayCache.addOrUpdateHoliday(savedHoliday)
 
       setIsDialogOpen(false)
       setFormData({ name: "", description: "", date: "" })
@@ -253,6 +269,7 @@ export function HolidayManagementScreen() {
       }
 
       setHolidays((prev) => prev.filter((h) => h.date !== holiday.date))
+      holidayCache.deleteHoliday(holiday.date)
 
       setNotice({
         type: "info",
@@ -453,6 +470,19 @@ export function HolidayManagementScreen() {
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
+
+            {/* Refresh Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchHolidays(selectedYear, true)}
+              disabled={loading || saving}
+              className="h-8 px-2.5 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 gap-1.5 cursor-pointer shadow-2xs"
+              title="Refresh holidays from server"
+            >
+              <RotateCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline text-xs">Refresh</span>
+            </Button>
 
             {/* Add Holiday Button */}
             {false && (

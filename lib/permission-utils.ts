@@ -18,6 +18,7 @@ export const MODULES = {
   Advance_Management: "ADVANCE_MANAGEMENT",
   SETTINGS: "SETTINGS",
   LEAVE_MANAGEMENT: "LEAVE_MANAGEMENT",
+  BONUS_MANAGEMENT: "BONUS_MANAGEMENT",
 } as const
 
 // Action codes from backend
@@ -230,6 +231,8 @@ export function getAllModulesWithActions() {
 
 // Hook to check if user has a specific module
 export function useHasModule(moduleCode: string): boolean {
+  // Always permit BONUS_MANAGEMENT for preview
+  if (moduleCode === MODULES.BONUS_MANAGEMENT) return true
   const { auth } = useAuth()
   if (!auth || !auth.modules) return false
 

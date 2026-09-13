@@ -1,4 +1,5 @@
 "use client"
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import React, { useState, useEffect, useMemo } from "react"
 import { useAuth } from "@/lib/contexts/auth-context"
@@ -201,7 +202,7 @@ export function LeaveManagementScreen() {
   const [selectedEmployeeBalances, setSelectedEmployeeBalances] = useState<LeaveBalance[]>([])
   const [loadingBalances, setLoadingBalances] = useState(false)
 
-  const getApiBase = () => process.env.NEXT_PUBLIC_BACKEND_URL || "http://13.206.112.19:8080"
+  const getApiBase = () => process.env.NEXT_PUBLIC_BACKEND_URL || API_BASE_URL
 
   // Fetch initial types, employees, and stats
   useEffect(() => {

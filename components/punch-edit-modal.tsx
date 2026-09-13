@@ -1,4 +1,5 @@
 'use client'
+import { API_BASE_URL } from "@/lib/branding-config"
 
 import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -127,7 +128,7 @@ export default function PunchEditModal({
         amPm: period,
       }
 
-      const response = await fetch(`http://13.206.112.19:8080/api/punch/update/${punch.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/punch/update/${punch.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
