@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Loader2, CalendarIcon, ArrowUp, ArrowDown, X, ChevronDown, GripVertical } from 'lucide-react'
+import { Loader2, CalendarIcon, ArrowUp, ArrowDown, X, ChevronDown, GripVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { format, parseISO, startOfDay } from 'date-fns'
 import { useAuth } from '@/lib/contexts/auth-context'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -244,6 +244,10 @@ export default function EmployeePunchHistoryScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Pagination state (400 records per page as requested)
+  const [pageSize, setPageSize] = useState<number>(400)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
   // Multi-sort: ordered array, index 0 = primary sort
   const [sorts, setSorts] = useState<SortEntry[]>(DEFAULT_SORTS)
 
@@ -378,11 +382,29 @@ export default function EmployeePunchHistoryScreen() {
   const isDefaultSort =
     sorts.length === 1 && sorts[0].column === 'date' && sorts[0].direction === 'asc'
 
-  // ── group punches by date (preserving sort order) ─────────────────────────
+  // ── Reset pagination when filters or sorts change ─────────────────────────
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [employeeName, typeFilter, sourceFilter, startDate, endDate, sorts])
+
+  // ── Pagination calculations (400 records per page) ────────────────────────
+  const totalRecords = filteredPunches.length
+  const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize))
+  const isFirstPage = currentPage <= 1
+  const isLastPage = currentPage >= totalPages
+
+  const startIndex = totalRecords === 0 ? 0 : (currentPage - 1) * pageSize
+  const endIndex = Math.min(startIndex + pageSize, totalRecords)
+
+  const paginatedPunches = useMemo(() => {
+    return filteredPunches.slice(startIndex, endIndex)
+  }, [filteredPunches, startIndex, endIndex])
+
+  // ── group punches by date for current page (preserving sort order) ────────
   const groupedByDate = useMemo(() => {
     const groups: { date: string; punches: PunchData[] }[] = []
     const seen = new Map<string, number>()
-    for (const punch of filteredPunches) {
+    for (const punch of paginatedPunches) {
       const key = punch.date || 'unknown'
       if (seen.has(key)) {
         groups[seen.get(key)!].punches.push(punch)
@@ -392,7 +414,7 @@ export default function EmployeePunchHistoryScreen() {
       }
     }
     return groups
-  }, [filteredPunches])
+  }, [paginatedPunches])
 
   // ── access guard ──────────────────────────────────────────────────────────
 
@@ -504,11 +526,87 @@ export default function EmployeePunchHistoryScreen() {
           </div>
 
           {/* Total Records */}
-          {!isLoading && filteredPunches.length > 0 && (
+          {!isLoading && totalRecords > 0 && (
             <div className="space-y-1 flex-shrink-0">
               <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Total Records</Label>
               <div className="h-9 flex items-center px-3 rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
-                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{filteredPunches.length.toLocaleString()}</span>
+                <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{totalRecords.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Per Page Selection */}
+          {!isLoading && totalRecords > 0 && (
+            <div className="space-y-1 flex-shrink-0">
+              <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">Per Page</Label>
+              <Select
+                value={String(pageSize)}
+                onValueChange={(v) => {
+                  setPageSize(Number(v))
+                  setCurrentPage(1)
+                }}
+              >
+                <SelectTrigger className="h-9 w-24 text-sm bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="100">100</SelectItem>
+                  <SelectItem value="200">200</SelectItem>
+                  <SelectItem value="400">400</SelectItem>
+                  <SelectItem value="800">800</SelectItem>
+                  <SelectItem value="1000">1000</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Page Navigator in Filter Bar */}
+          {!isLoading && totalRecords > 0 && totalPages > 1 && (
+            <div className="space-y-1 flex-shrink-0">
+              <Label className="text-slate-700 dark:text-slate-200 font-semibold text-sm">
+                Page {currentPage} of {totalPages}
+              </Label>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={isFirstPage}
+                  title="First page"
+                >
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={isFirstPage}
+                  title="Previous page"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={isLastPage}
+                  title="Next page"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={isLastPage}
+                  title="Last page"
+                >
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           )}
@@ -550,8 +648,67 @@ export default function EmployeePunchHistoryScreen() {
 
       {/* ── Table ──────────────────────────────────────────────────────────── */}
       <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Punch Records</h2>
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Punch Records</h2>
+            {!isLoading && totalRecords > 0 && (
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                (Showing {startIndex + 1}–{endIndex} of {totalRecords.toLocaleString()} records)
+              </span>
+            )}
+          </div>
+
+          {!isLoading && totalRecords > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mr-1">
+                Page <span className="font-bold text-slate-800 dark:text-slate-200">{currentPage}</span> of{' '}
+                <span className="font-bold text-slate-800 dark:text-slate-200">{totalPages}</span>
+              </span>
+
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={isFirstPage}
+                  title="First page"
+                >
+                  <ChevronsLeft className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={isFirstPage}
+                  title="Previous page"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={isLastPage}
+                  title="Next page"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer disabled:opacity-40"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={isLastPage}
+                  title="Last page"
+                >
+                  <ChevronsRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
         <div className="overflow-x-auto">
           <Table>
@@ -643,6 +800,65 @@ export default function EmployeePunchHistoryScreen() {
             </TableBody>
           </Table>
         </div>
+
+        {/* ── Bottom Pagination Footer ── */}
+        {!isLoading && totalRecords > 0 && (
+          <div className="p-3.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300">
+            <div>
+              Showing <span className="font-semibold text-slate-900 dark:text-slate-100">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">{endIndex}</span> of{' '}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">{totalRecords.toLocaleString()}</span> records
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 px-2.5 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs gap-1 cursor-pointer disabled:opacity-40"
+                onClick={() => setCurrentPage(1)}
+                disabled={isFirstPage}
+              >
+                <ChevronsLeft className="h-3.5 w-3.5" />
+                First
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 px-2.5 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs gap-1 cursor-pointer disabled:opacity-40"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={isFirstPage}
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+                Previous
+              </Button>
+
+              <div className="px-3 py-1 font-semibold text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md">
+                Page {currentPage} of {totalPages}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 px-2.5 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs gap-1 cursor-pointer disabled:opacity-40"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={isLastPage}
+              >
+                Next
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 px-2.5 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs gap-1 cursor-pointer disabled:opacity-40"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={isLastPage}
+              >
+                Last
+                <ChevronsRight className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
